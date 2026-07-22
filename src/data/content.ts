@@ -1,30 +1,27 @@
 export const profile = {
-  name: "Your Name",
-  role: "Software Engineer",
-  tagline: "I build interfaces that feel alive.",
-  bio: "I'm a software engineer who cares about the details most people scroll past — the timing of a transition, the weight of a headline, the moment a page starts to feel like a place instead of a document. This portfolio is a template: replace this bio, swap the projects below, and make it yours.",
-  location: "Based in — your city",
-  email: "you@example.com",
+  name: "Andrew Evans",
+  role: "Mechanical Engineer",
+  tagline: "I build machines that perform.",
+  bio: "I'm a mechanical engineering student at McMaster University, currently leading the chassis and composites program for Mac Formula Electric while working across manufacturing, defense mobility systems, and infrastructure. I like problems where structural performance, weight, and manufacturability all pull in different directions — and where the fix has to survive contact with a dyno, a torsion rig, or a shop floor. Open to co-op opportunities from September 2026 through September 2027.",
+  location: "Hamilton, ON, Canada",
+  email: "evansa25@mcmaster.ca",
   socials: [
-    { label: "GitHub", href: "https://github.com/your-username" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/your-username" },
-    { label: "Twitter / X", href: "https://x.com/your-username" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/andrew-evans-255366248/" },
   ],
 };
 
 export const skills = [
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Node.js",
-  "Python",
-  "PostgreSQL",
-  "Tailwind CSS",
-  "Framer Motion",
-  "GraphQL",
-  "AWS",
-  "Docker",
-  "Figma",
+  "SolidWorks",
+  "Ansys FEA",
+  "Ansys ACP",
+  "Siemens NX",
+  "GD&T",
+  "DFM",
+  "Composite Design",
+  "Root Cause Analysis",
+  "Power BI",
+  "Excel / VBA",
+  "Manufacturing",
 ];
 
 export type Project = {
@@ -38,40 +35,32 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    title: "Project One",
+    title: "Carbon Fiber Monocoque & Chassis",
     description:
-      "A short, punchy description of what this project does and the problem it solves. Focus on impact, not just tech.",
-    tags: ["Next.js", "TypeScript", "PostgreSQL"],
-    href: "#",
-    repo: "#",
+      "Led design and manufacturing of the chassis subsystems for Mac Formula Electric's 20-engineer team, driving a 20% weight reduction while validating the FE model against physical torsional stiffness testing to within 8% error.",
+    tags: ["SolidWorks", "Ansys ACP", "Ansys FEA"],
+    year: "2025",
+  },
+  {
+    title: "Firewall Redesign for Manufacturability",
+    description:
+      "Optimized the vehicle's firewall design for manufacturability, cutting weight by 31% using SolidWorks modeling and Ansys FEA simulations to validate the new design against structural requirements.",
+    tags: ["SolidWorks", "Ansys FEA", "DFM"],
+    year: "2024",
+  },
+  {
+    title: "Damper Line Part Buffer Cart",
+    description:
+      "Designed, material-selected, and fabricated a part buffer cart that decouples a robotic station from downstream assembly on a new damper production line, protecting cycle times during robot downtime.",
+    tags: ["Manufacturing", "Tooling Design", "DFM"],
     year: "2026",
   },
   {
-    title: "Project Two",
+    title: "Bilge Adapter & Weight Verification Tool",
     description:
-      "Another project summary. Mention scale, users, or a specific technical challenge you solved.",
-    tags: ["React", "Node.js", "AWS"],
-    href: "#",
-    repo: "#",
+      "Supported bilge adapter design in Siemens NX for water evacuation testing and built an automated weight verification tool that integrates real part data for precise vehicle mass compliance.",
+    tags: ["Siemens NX", "GD&T", "Excel / VBA"],
     year: "2025",
-  },
-  {
-    title: "Project Three",
-    description:
-      "Describe the outcome. Numbers are persuasive: faster load times, more signups, fewer bugs.",
-    tags: ["Python", "Docker", "GraphQL"],
-    href: "#",
-    repo: "#",
-    year: "2025",
-  },
-  {
-    title: "Project Four",
-    description:
-      "A side project or experiment worth showing off. Passion projects reveal a lot about how you think.",
-    tags: ["Figma", "Framer Motion"],
-    href: "#",
-    repo: "#",
-    year: "2024",
   },
 ];
 
@@ -84,23 +73,52 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
-    role: "Software Engineer",
-    org: "Company Name",
-    period: "2024 — Present",
+    role: "Ride Dynamics Manufacturing Intern",
+    org: "Multimatic",
+    period: "May 2026 — Present",
     description:
-      "What you owned, what you shipped, and the impact it had. One or two sentences is plenty.",
+      "Ran cycle time studies and designed custom tooling for a new damper line, performed root cause failure analysis on dyno-failed dampers, and built a part buffer cart to protect line cycle times during robot downtime.",
   },
   {
-    role: "Software Engineer Intern",
-    org: "Company Name",
-    period: "2023 — 2024",
+    role: "Chassis Lead Engineer",
+    org: "Mac Formula Electric",
+    period: "June 2025 — Present",
     description:
-      "Same idea — concrete, specific, outcome-focused.",
+      "Leading the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% chassis weight reduction while mentoring members in SolidWorks and composite design.",
   },
   {
-    role: "B.S. Computer Science",
-    org: "University Name",
-    period: "2020 — 2024",
-    description: "Relevant coursework, honors, or activities worth a mention.",
+    role: "Mobility Systems Design Engineer Intern",
+    org: "General Dynamics",
+    period: "May 2025 — Aug 2025",
+    description:
+      "Resolved high-priority assembly issues in Siemens NX, built an automated weight verification tool for vehicle mass roll-ups, and authored a Statement of Work specifying durability tests for new gear oils.",
+  },
+  {
+    role: "Project Engineering Intern",
+    org: "Town of Ajax",
+    period: "May 2024 — Aug 2024",
+    description:
+      "Reduced costs by 14% on a $3M infrastructure budget through resource calibration and cost-saving analysis, and conducted quality inspections against engineering drawings and standards.",
+  },
+  {
+    role: "Chassis Engineer",
+    org: "Mac Formula Electric",
+    period: "Feb 2024 — June 2025",
+    description:
+      "Optimized the vehicle's firewall design for manufacturability, achieving a 31% weight reduction using SolidWorks and Ansys FEA simulations to validate the new design.",
+  },
+  {
+    role: "Data Analytics Intern",
+    org: "Nokia",
+    period: "July 2022 — Aug 2022",
+    description:
+      "Built interactive Power BI dashboards visualizing key network performance indicators and automated Excel reporting, cutting manual processing time by 40%.",
+  },
+  {
+    role: "B.Eng. Mechanical Engineering",
+    org: "McMaster University",
+    period: "Expected May 2028",
+    description:
+      "Chassis lead for Mac Formula Electric, McMaster's Formula SAE Electric racing team.",
   },
 ];
