@@ -5,12 +5,15 @@ export const profile = {
   bio: "I'm a mechanical engineering student at McMaster University, currently leading the chassis and composites program for Mac Formula Electric while working across manufacturing, defense mobility systems, and infrastructure. I like problems where structural performance, weight, and manufacturability all pull in different directions — and where the fix has to survive contact with a dyno, a torsion rig, or a shop floor. Open to co-op opportunities from September 2026 through September 2027.",
   location: "Hamilton, ON, Canada",
   email: "evansa25@mcmaster.ca",
-  socials: [{ label: "LinkedIn", href: "https://linkedin.com/in/your-username" }],
+  socials: [
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/andrew-evans-255366248/" },
+  ],
 };
 
 export const skills = [
   "SolidWorks",
   "Ansys FEA",
+  "Ansys ACP",
   "Siemens NX",
   "GD&T",
   "DFM",
@@ -35,7 +38,7 @@ export const projects: Project[] = [
     title: "Carbon Fiber Monocoque & Chassis",
     description:
       "Led design and manufacturing of the chassis subsystems for Mac Formula Electric's 20-engineer team, driving a 20% weight reduction while validating the FE model against physical torsional stiffness testing to within 8% error.",
-    tags: ["SolidWorks", "Composite Design", "Ansys FEA"],
+    tags: ["SolidWorks", "Ansys ACP", "Ansys FEA"],
     year: "2025",
   },
   {
