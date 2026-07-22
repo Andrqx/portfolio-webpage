@@ -28,7 +28,7 @@ export default function Hero() {
           transition={{ duration: 0.6 }}
           className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-muted mb-6"
         >
-          {profile.role} — {profile.location}
+          {profile.role} — {profile.school}
         </motion.p>
 
         <h1 className="text-[13vw] md:text-[6.5vw] leading-[0.95] font-bold tracking-tight">

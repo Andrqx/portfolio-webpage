@@ -1,27 +1,64 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
-import { projects } from "@/data/content";
+import { projects, teams } from "@/data/content";
+
+const MotionLink = motion(Link);
 
 export default function Projects() {
+  const [activeTeam, setActiveTeam] = useState(teams[0].key);
+  const activeProjects = projects.filter((p) => p.team === activeTeam);
+
   return (
     <section id="work" className="py-32 px-6 md:px-10">
       <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-16">
+        <Reveal className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">
             02 / Work
           </p>
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Selected projects
+            Projects + Work
           </h2>
         </Reveal>
 
-        <div className="grid md:grid-cols-2 gap-px bg-border">
-          {projects.map((project, i) => (
-            <Reveal key={project.title} delay={i * 0.05}>
-              <motion.a
-                href={project.href}
+        <Reveal delay={0.05} className="mb-12">
+          <div className="flex flex-wrap gap-3">
+            {teams.map((team) => {
+              const active = team.key === activeTeam;
+              return (
+                <button
+                  key={team.key}
+                  type="button"
+                  onClick={() => setActiveTeam(team.key)}
+                  className={`font-mono text-xs uppercase tracking-widest rounded-full px-4 py-2 border transition-colors ${
+                    active
+                      ? "bg-foreground text-background border-foreground"
+                      : "border-border text-muted hover:text-foreground"
+                  }`}
+                >
+                  {team.label}
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTeam}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="grid md:grid-cols-2 gap-px bg-border"
+          >
+            {activeProjects.map((project) => (
+              <MotionLink
+                key={project.slug}
+                href={`/work/${project.slug}`}
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="group block bg-background p-8 md:p-10 h-full hover:bg-foreground/[0.03] transition-colors"
@@ -31,7 +68,7 @@ export default function Projects() {
                     {project.title}
                   </h3>
                   <span className="font-mono text-xs text-muted shrink-0">
-                    {project.year}
+                    {project.period}
                   </span>
                 </div>
                 <p className="text-muted leading-relaxed mb-6">
@@ -47,10 +84,10 @@ export default function Projects() {
                     </span>
                   ))}
                 </div>
-              </motion.a>
-            </Reveal>
-          ))}
-        </div>
+              </MotionLink>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

@@ -2,8 +2,9 @@ export const profile = {
   name: "Andrew Evans",
   role: "Mechanical Engineer",
   tagline: "I build machines that perform.",
-  bio: "I'm a mechanical engineering student at McMaster University, currently leading the chassis and composites program for Mac Formula Electric while working across manufacturing, defense mobility systems, and infrastructure. I like problems where structural performance, weight, and manufacturability all pull in different directions — and where the fix has to survive contact with a dyno, a torsion rig, or a shop floor. Open to co-op opportunities from September 2026 through September 2027.",
-  location: "Hamilton, ON, Canada",
+  bio: "I'm a mechanical engineering student at McMaster University, currently leading the chassis and composites program for Mac Formula Electric. I'm open to co-op opportunities from September 2026 through September 2027.",
+  location: "Toronto, ON, Canada",
+  school: "McMaster",
   email: "evansa25@mcmaster.ca",
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrew-evans-255366248/" },
@@ -24,43 +25,142 @@ export const skills = [
   "Manufacturing",
 ];
 
+export type TeamKey = "FSAE" | "Multimatic" | "General Dynamics";
+
+export const teams: { key: TeamKey; label: string; org: string }[] = [
+  { key: "FSAE", label: "FSAE", org: "Mac Formula Electric" },
+  { key: "Multimatic", label: "Multimatic", org: "Multimatic" },
+  { key: "General Dynamics", label: "General Dynamics", org: "General Dynamics" },
+];
+
 export type Project = {
+  slug: string;
   title: string;
+  team: TeamKey;
+  period: string;
   description: string;
+  detail: string[];
   tags: string[];
-  href?: string;
-  repo?: string;
-  year: string;
 };
 
 export const projects: Project[] = [
   {
+    slug: "carbon-fiber-monocoque-chassis",
     title: "Carbon Fiber Monocoque & Chassis",
+    team: "FSAE",
+    period: "June 2025 — Present",
     description:
-      "Led design and manufacturing of the chassis subsystems for Mac Formula Electric's 20-engineer team, driving a 20% weight reduction while validating the FE model against physical torsional stiffness testing to within 8% error.",
+      "Leading the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% weight reduction while validating structural performance.",
+    detail: [
+      "As Chassis Lead Engineer for Mac Formula Electric, I own the carbon fiber monocoque and chassis subsystems for a 20-engineer team — from composite layup strategy through structural validation.",
+      "This cycle's redesign cut chassis weight by 20% while preserving the majority of structural integrity, and I mentored team members in SolidWorks and composite design along the way.",
+      "Working with the capstone team, we validated the chassis FE model against physical torsional stiffness testing, achieving within 8% simulation-to-test error using measured composite material data.",
+    ],
     tags: ["SolidWorks", "Ansys ACP", "Ansys FEA"],
-    year: "2025",
   },
   {
+    slug: "firewall-dfm-redesign",
     title: "Firewall Redesign for Manufacturability",
+    team: "FSAE",
+    period: "Feb 2024 — June 2025",
     description:
-      "Optimized the vehicle's firewall design for manufacturability, cutting weight by 31% using SolidWorks modeling and Ansys FEA simulations to validate the new design against structural requirements.",
+      "Optimized the vehicle's firewall design for manufacturability, cutting weight by 31% using SolidWorks and Ansys FEA.",
+    detail: [
+      "As Chassis Engineer, I optimized the vehicle's firewall design for manufacturability (DFM), identifying opportunities to simplify geometry and reduce material without compromising protection.",
+      "Using SolidWorks for modeling and Ansys FEA to validate the new design against structural requirements, the redesign achieved a 31% weight reduction.",
+    ],
     tags: ["SolidWorks", "Ansys FEA", "DFM"],
-    year: "2024",
   },
   {
+    slug: "damper-line-cycle-time-tooling",
+    title: "Damper Line Cycle Time & Custom Tooling",
+    team: "Multimatic",
+    period: "May 2026 — Present",
+    description:
+      "Ran cycle time studies and designed custom tooling for a new second-generation damper line for GM light duty trucks.",
+    detail: [
+      "Ahead of a new second-generation damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling to support the assembly process.",
+      "I also reported control faults found in BOS Systems' assembly machines, helping the line launch with fewer surprises.",
+    ],
+    tags: ["Manufacturing", "Tooling Design", "Cycle Time Studies"],
+  },
+  {
+    slug: "dyno-failure-root-cause-analysis",
+    title: "Dyno Failure Root Cause Analysis",
+    team: "Multimatic",
+    period: "May 2026 — Present",
+    description:
+      "Performed root cause failure analysis on 5 dampers that failed dyno validation during pre-production testing.",
+    detail: [
+      "Five dampers failed dyno validation during pre-production testing. I measured critical dimensions and tolerances across each unit to isolate the components driving failure.",
+      "That analysis informed the corrective action taken before the line moved forward, reducing the risk of the same failure recurring at volume.",
+    ],
+    tags: ["Root Cause Analysis", "GD&T", "Manufacturing"],
+  },
+  {
+    slug: "damper-line-part-buffer-cart",
     title: "Damper Line Part Buffer Cart",
+    team: "Multimatic",
+    period: "May 2026 — Present",
     description:
-      "Designed, material-selected, and fabricated a part buffer cart that decouples a robotic station from downstream assembly on a new damper production line, protecting cycle times during robot downtime.",
+      "Designed, material-selected, and fabricated a part buffer cart that protects cycle times during robot downtime.",
+    detail: [
+      "To protect the damper line from robot downtime, I designed, material-selected, and fabricated a part buffer cart that decouples the upstream robotic station from downstream manual assembly.",
+      "The cart stores surplus parts so the line can keep flowing even when the upstream robot goes down, sustaining cycle times instead of stalling the whole line.",
+    ],
     tags: ["Manufacturing", "Tooling Design", "DFM"],
-    year: "2026",
   },
   {
-    title: "Bilge Adapter & Weight Verification Tool",
+    slug: "hull-assembly-design-solutions",
+    title: "Hull Assembly Design Solutions",
+    team: "General Dynamics",
+    period: "May 2025 — Aug 2025",
     description:
-      "Supported bilge adapter design in Siemens NX for water evacuation testing and built an automated weight verification tool that integrates real part data for precise vehicle mass compliance.",
-    tags: ["Siemens NX", "GD&T", "Excel / VBA"],
-    year: "2025",
+      "Resolved high-priority assembly issues by engineering design solutions in Siemens NX.",
+    detail: [
+      "I resolved high-priority assembly issues by engineering design solutions in Siemens NX, collaborating across Hull Additions, Propulsion, and manufacturing teams.",
+      "The goal on every fix was the same: an integrated, production-ready solution — not a patch that just moved the problem downstream.",
+    ],
+    tags: ["Siemens NX", "GD&T"],
+  },
+  {
+    slug: "bilge-adapter-design",
+    title: "Bilge Adapter Design for Water Evacuation Testing",
+    team: "General Dynamics",
+    period: "May 2025 — Aug 2025",
+    description:
+      "Aided bilge adapter design in Siemens NX for water evacuation testing, applying GD&T and verifying prototype testing.",
+    detail: [
+      "I supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T to keep the design within tolerance across manufacturing and assembly.",
+      "I also verified the design through prototype testing, confirming it performed as intended before sign-off.",
+    ],
+    tags: ["Siemens NX", "GD&T"],
+  },
+  {
+    slug: "automated-weight-verification-tool",
+    title: "Automated Weight Verification Tool",
+    team: "General Dynamics",
+    period: "May 2025 — Aug 2025",
+    description:
+      "Built an automated weight verification tool that integrated real part data into Excel for precise mass roll-ups.",
+    detail: [
+      "I built an automated weight verification tool that pulled real part data directly into Excel, enabling precise mobility assembly mass roll-ups.",
+      "This improved the accuracy of vehicle weight compliance reporting and cut down the manual effort needed to keep it up to date.",
+    ],
+    tags: ["Excel / VBA", "GD&T"],
+  },
+  {
+    slug: "gear-oil-durability-test-sow",
+    title: "Gear Oil Durability Test Specification",
+    team: "General Dynamics",
+    period: "May 2025 — Aug 2025",
+    description:
+      "Authored a Statement of Work specifying ASME and ISO durability tests to validate new gear oils.",
+    detail: [
+      "I authored a Statement of Work specifying ASME and ISO durability tests to validate new gear oils being considered for mobility systems.",
+      "The test plan directly addressed known failure risks — seal wear and carbon buildup — to make sure any new oil met performance requirements before it reached the field.",
+    ],
+    tags: ["ASME", "ISO", "Root Cause Analysis"],
   },
 ];
 
