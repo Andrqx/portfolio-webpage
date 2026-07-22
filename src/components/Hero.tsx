@@ -2,11 +2,14 @@
 
 import { motion } from "framer-motion";
 import TechnoBackground from "@/components/TechnoBackground";
+import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
 const headline = profile.tagline.split(" ");
 
 export default function Hero() {
+  const { ready, flash } = useEntranceReveal();
+
   return (
     <section
       id="top"
@@ -14,10 +17,14 @@ export default function Hero() {
     >
       <TechnoBackground />
 
-      <div className="relative z-10 mx-auto max-w-6xl w-full">
+      <div
+        className={`relative z-10 mx-auto max-w-6xl w-full ${
+          flash ? "animate-lightning-flash" : ""
+        }`}
+      >
         <motion.p
           initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{ duration: 0.6 }}
           className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-muted mb-6"
         >
@@ -29,7 +36,7 @@ export default function Hero() {
             <span key={i} className="inline-block overflow-hidden mr-4 align-top">
               <motion.span
                 initial={{ y: "110%" }}
-                animate={{ y: "0%" }}
+                animate={ready ? { y: "0%" } : { y: "110%" }}
                 transition={{
                   duration: 0.7,
                   delay: 0.15 + i * 0.08,
@@ -47,7 +54,7 @@ export default function Hero() {
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: 0.6, delay: 0.7 }}
           className="mt-10 flex flex-wrap items-center gap-4"
         >
@@ -68,7 +75,7 @@ export default function Hero() {
 
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={ready ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: 1, delay: 1.2 }}
         className="absolute z-10 bottom-10 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted flex flex-col items-center gap-2"
       >

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { dispatchEntranceComplete } from "@/hooks/useEntranceReveal";
 
 type RGB = [number, number, number];
 
@@ -113,6 +114,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     setShowCounter(false);
     setFadeMs(reduceMotion ? 150 : SKIP_FADE_MS);
     setLeaving(true);
+    dispatchEntranceComplete();
     const t = window.setTimeout(finish, reduceMotion ? 150 : SKIP_FADE_MS);
     timersRef.current.push(t);
   };
@@ -128,6 +130,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       if (dismissedRef.current) return;
       setFadeMs(PIXEL_FADE_MS);
       setLeaving(true);
+      dispatchEntranceComplete();
     }, fadeDelay);
     const t2 = window.setTimeout(() => {
       if (dismissedRef.current) return;
@@ -147,6 +150,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         setShowCounter(false);
         setFadeMs(150);
         setLeaving(true);
+        dispatchEntranceComplete();
         window.setTimeout(finish, 150);
       }, 300);
       timersRef.current.push(t);
@@ -289,7 +293,8 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     const drawPixelDots = () => {
       const elapsed = performance.now() - pixelStartRef.current;
 
-      ctx.shadowBlur = 6;
+      // A cheap two-circle glow (soft wide + bright core) instead of
+      // ctx.shadowBlur, which is expensive to run per-shape at this count.
       for (const d of pixelDots) {
         const local = elapsed - d.appearAt;
         if (local <= 0) continue;
@@ -300,13 +305,17 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         const [r, g, b] = d.rgb;
         const alpha = d.alpha * eased;
         const size = d.size * (0.3 + 0.7 * eased);
-        ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+
         ctx.beginPath();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.35})`;
+        ctx.arc(d.x, d.y, size * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
         ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.shadowBlur = 0;
     };
 
     const step = () => {
