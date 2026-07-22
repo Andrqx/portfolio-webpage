@@ -58,9 +58,11 @@ type PixelDot = {
   alpha: number;
   appearAt: number;
   growMs: number;
+  fadeOutOffset: number;
+  fadeOutMs: number;
 };
 
-const COUNT_MS = 2100;
+const COUNT_MS = 1650;
 const HOLD_MS = 200;
 const PIXEL_MS = 2200;
 const PIXEL_FADE_MS = 900;
@@ -70,6 +72,9 @@ const PIXEL_DOT_COUNT = 340;
 const PIXEL_STAGGER_MS = 700;
 const PIXEL_GROW_MIN_MS = 250;
 const PIXEL_GROW_MAX_MS = 450;
+const PIXEL_FADEOUT_STAGGER_MS = 300;
+const PIXEL_FADEOUT_MIN_MS = 400;
+const PIXEL_FADEOUT_MAX_MS = 700;
 
 /** Ease-out-cubic: a smooth, steady motion rather than an instant pop. */
 function easeOutCubic(t: number) {
@@ -87,6 +92,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
   const dismissedRef = useRef(false);
   const phaseRef = useRef<"counting" | "pixels">("counting");
   const pixelStartRef = useRef(0);
+  const fadeStartRef = useRef(0);
   const timersRef = useRef<number[]>([]);
   const reduceMotion = useMemo(
     () =>
@@ -114,6 +120,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     setShowCounter(false);
     setFadeMs(reduceMotion ? 150 : SKIP_FADE_MS);
     setLeaving(true);
+    fadeStartRef.current = performance.now();
     dispatchEntranceComplete();
     const t = window.setTimeout(finish, reduceMotion ? 150 : SKIP_FADE_MS);
     timersRef.current.push(t);
@@ -130,6 +137,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       if (dismissedRef.current) return;
       setFadeMs(PIXEL_FADE_MS);
       setLeaving(true);
+      fadeStartRef.current = performance.now();
       dispatchEntranceComplete();
     }, fadeDelay);
     const t2 = window.setTimeout(() => {
@@ -159,10 +167,35 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
 
     let raf = 0;
     const start = performance.now();
+    let totalPaused = 0;
+    let pausedUntil = 0;
+    // A couple of brief stalls partway through, like a real progress bar
+    // hitting a slow chunk of work — rather than a mathematically perfect
+    // curve straight to 100.
+    const pausePoints = [
+      { threshold: 25 + Math.random() * 15, hold: 90 + Math.random() * 140, triggered: false },
+      { threshold: 55 + Math.random() * 20, hold: 90 + Math.random() * 140, triggered: false },
+    ];
+
     const tick = (now: number) => {
-      const t = Math.min((now - start) / COUNT_MS, 1);
+      if (now < pausedUntil) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
+      const t = Math.min((now - start - totalPaused) / COUNT_MS, 1);
       const eased = 1 - Math.pow(1 - t, 2);
-      setPercent(Math.round(eased * 100));
+      const pct = Math.round(eased * 100);
+
+      for (const p of pausePoints) {
+        if (!p.triggered && pct >= p.threshold) {
+          p.triggered = true;
+          pausedUntil = now + p.hold;
+          totalPaused += p.hold;
+        }
+      }
+
+      setPercent(pct);
       if (t < 1) {
         raf = requestAnimationFrame(tick);
       } else {
@@ -251,6 +284,10 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         appearAt: Math.random() * PIXEL_STAGGER_MS,
         growMs:
           PIXEL_GROW_MIN_MS + Math.random() * (PIXEL_GROW_MAX_MS - PIXEL_GROW_MIN_MS),
+        fadeOutOffset: Math.random() * PIXEL_FADEOUT_STAGGER_MS,
+        fadeOutMs:
+          PIXEL_FADEOUT_MIN_MS +
+          Math.random() * (PIXEL_FADEOUT_MAX_MS - PIXEL_FADEOUT_MIN_MS),
       }));
     };
 
@@ -291,7 +328,9 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     };
 
     const drawPixelDots = () => {
-      const elapsed = performance.now() - pixelStartRef.current;
+      const now = performance.now();
+      const elapsed = now - pixelStartRef.current;
+      const fadeElapsed = fadeStartRef.current ? now - fadeStartRef.current : -1;
 
       // A cheap two-circle glow (soft wide + bright core) instead of
       // ctx.shadowBlur, which is expensive to run per-shape at this count.
@@ -302,8 +341,21 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         const eased = easeOutCubic(t);
         if (eased <= 0) continue;
 
+        // Each dot dissolves on its own staggered schedule too, so the
+        // pixels visibly fade away rather than just riding the container's
+        // single uniform opacity fade.
+        let fadeMultiplier = 1;
+        if (fadeElapsed >= 0) {
+          const fadeLocal = fadeElapsed - d.fadeOutOffset;
+          if (fadeLocal > 0) {
+            const fadeT = Math.min(fadeLocal / d.fadeOutMs, 1);
+            fadeMultiplier = Math.pow(1 - fadeT, 3);
+          }
+        }
+        if (fadeMultiplier <= 0) continue;
+
         const [r, g, b] = d.rgb;
-        const alpha = d.alpha * eased;
+        const alpha = d.alpha * eased * fadeMultiplier;
         const size = d.size * (0.3 + 0.7 * eased);
 
         ctx.beginPath();
