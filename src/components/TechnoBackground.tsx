@@ -51,11 +51,25 @@ type Particle = {
   alpha: number;
 };
 
+type Comet = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  rgb: RGB;
+};
+
 const LINK_DIST = 130;
 const REPEL_RADIUS = 150;
 const REPEL_STRENGTH = 2600;
 const SPRING = 0.02;
 const DAMPING = 0.9;
+// Roughly every 5-11s at 60fps — rare enough to feel like a nice surprise,
+// not a constant distraction.
+const COMET_MIN_FRAMES = 300;
+const COMET_MAX_FRAMES = 660;
 
 export default function TechnoBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -75,9 +89,27 @@ export default function TechnoBackground() {
     let width = 0;
     let height = 0;
     let particles: Particle[] = [];
+    let comets: Comet[] = [];
+    let nextCometAt = COMET_MIN_FRAMES + Math.random() * (COMET_MAX_FRAMES - COMET_MIN_FRAMES);
     let frame = 0;
     let raf = 0;
     const pointer = { x: -9999, y: -9999, active: false };
+
+    const spawnComet = (): Comet => {
+      const fromLeft = Math.random() < 0.5;
+      const y = Math.random() * height * 0.7;
+      const speed = 6 + Math.random() * 4;
+      const angle = (fromLeft ? 1 : -1) * (0.2 + Math.random() * 0.2);
+      return {
+        x: fromLeft ? -20 : width + 20,
+        y,
+        vx: Math.cos(angle) * speed * (fromLeft ? 1 : -1),
+        vy: Math.sin(angle) * speed,
+        life: 0,
+        maxLife: 60 + Math.random() * 30,
+        rgb: sampleRamp(colors, Math.random()),
+      };
+    };
 
     const makeParticle = (): Particle => {
       const homeX = Math.random() * width;
@@ -176,6 +208,34 @@ export default function TechnoBackground() {
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // Occasional shooting stars streaking across the hero.
+      if (frame >= nextCometAt) {
+        comets.push(spawnComet());
+        nextCometAt = frame + COMET_MIN_FRAMES + Math.random() * (COMET_MAX_FRAMES - COMET_MIN_FRAMES);
+      }
+      for (const c of comets) {
+        const tailX = c.x - c.vx * 6;
+        const tailY = c.y - c.vy * 6;
+        const [r, g, b] = c.rgb;
+        const fade = 1 - c.life / c.maxLife;
+        const grad = ctx.createLinearGradient(tailX, tailY, c.x, c.y);
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${0.7 * fade})`);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(c.x, c.y);
+        ctx.stroke();
+
+        c.x += c.vx;
+        c.y += c.vy;
+        c.life += 1;
+      }
+      comets = comets.filter(
+        (c) => c.life < c.maxLife && c.x > -40 && c.x < width + 40
+      );
     };
 
     const loop = () => {
