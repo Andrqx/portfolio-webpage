@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { animate } from "animejs";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
@@ -19,6 +19,8 @@ export default function Nav() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const { ready, flash } = useEntranceReveal(isHome);
+  const headerRef = useRef<HTMLElement>(null);
+  const playedRef = useRef(false);
 
   // Section anchors only work as bare hashes on the homepage itself —
   // from any other page (e.g. a project detail page) they need to route
@@ -31,11 +33,31 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!ready || playedRef.current || !headerRef.current) return;
+    playedRef.current = true;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reduceMotion) {
+      headerRef.current.style.opacity = "1";
+      headerRef.current.style.transform = "translateY(0)";
+      return;
+    }
+
+    animate(headerRef.current, {
+      translateY: [-80, 0],
+      opacity: [0, 1],
+      duration: 600,
+      ease: "outExpo",
+    });
+  }, [ready]);
+
   return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={ready ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    <header
+      ref={headerRef}
+      style={{ opacity: 0, transform: "translateY(-80px)" }}
       className={`fixed top-0 inset-x-0 z-40 transition-colors duration-300 ${
         scrolled ? "backdrop-blur-md bg-background/70 border-b border-border" : ""
       } ${flash ? "animate-lightning-flash" : ""}`}
@@ -66,6 +88,6 @@ export default function Nav() {
           Let&apos;s talk
         </Link>
       </nav>
-    </motion.header>
+    </header>
   );
 }
