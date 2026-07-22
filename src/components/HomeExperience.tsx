@@ -13,8 +13,18 @@ export default function HomeExperience({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const alreadyEntered = window.sessionStorage.getItem(SESSION_KEY) === "1";
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
-    if (!alreadyEntered) setShowEntrance(true);
+    if (!alreadyEntered) {
+      // The browser's own scroll restoration can put scrollY > 0 before this
+      // runs (e.g. after a reload mid-page). With the entrance covering the
+      // viewport that jump is invisible until we unlock scroll on entry, so
+      // it looks like clicking the globe "teleports" you into the page.
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+      setShowEntrance(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -26,6 +36,7 @@ export default function HomeExperience({ children }: { children: ReactNode }) {
 
   const handleEnter = () => {
     window.sessionStorage.setItem(SESSION_KEY, "1");
+    window.scrollTo(0, 0);
     setShowEntrance(false);
   };
 

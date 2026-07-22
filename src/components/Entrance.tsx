@@ -51,7 +51,21 @@ type Point = {
   evy: number;
 };
 
+type Star = {
+  x: number;
+  y: number;
+  radius: number;
+  rgb: RGB;
+  baseAlpha: number;
+  twinkleSpeed: number;
+  twinklePhase: number;
+  // Explode-animation state (screen space) — stars scatter too.
+  evx: number;
+  evy: number;
+};
+
 const PARTICLE_COUNT = 480;
+const STAR_COUNT = 160;
 const EXPLODE_MS = 850;
 
 /** Evenly distributes N points on a sphere via a golden-angle spiral. */
@@ -91,6 +105,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     let raf = 0;
     let frame = 0;
     let explodeStart = 0;
+    const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
     const sphere = fibonacciSphere(PARTICLE_COUNT);
     const points: Point[] = sphere.map(([sx, sy, sz]) => ({
@@ -105,6 +120,21 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       evy: 0,
     }));
 
+    let stars: Star[] = [];
+    const makeStars = () => {
+      stars = Array.from({ length: STAR_COUNT }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: 0.5 + Math.random() * 1.1,
+        rgb: sampleRamp(colors, Math.random()),
+        baseAlpha: 0.12 + Math.random() * 0.28,
+        twinkleSpeed: 0.008 + Math.random() * 0.02,
+        twinklePhase: Math.random() * Math.PI * 2,
+        evx: 0,
+        evy: 0,
+      }));
+    };
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
@@ -113,6 +143,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      makeStars();
     };
 
     const project = (
@@ -144,11 +175,65 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       const cx = width / 2;
       const cy = height / 2;
       const globeRadius = Math.min(width, height) * 0.26;
-      const rotY = frame * 0.0032;
-      const rotX = Math.sin(frame * 0.0011) * 0.25;
 
       const elapsed = explodeStart ? performance.now() - explodeStart : 0;
       const explodeT = explodeStart ? Math.min(elapsed / EXPLODE_MS, 1) : 0;
+
+      // Ambient starfield fills the rest of the viewport so it never reads
+      // as empty black space. Stars scatter outward on explode too, just
+      // slower than the globe, for a bit of parallax.
+      for (const s of stars) {
+        let sx = s.x;
+        let sy = s.y;
+        let alpha =
+          s.baseAlpha *
+          (0.6 + 0.4 * Math.sin(frame * s.twinkleSpeed + s.twinklePhase));
+
+        if (explodeStart) {
+          if (s.evx === 0 && s.evy === 0) {
+            const dx = s.x - cx || 0.001;
+            const dy = s.y - cy || 0.001;
+            const dist = Math.hypot(dx, dy) || 1;
+            const speed = 1.5 + Math.random() * 3;
+            s.evx = (dx / dist) * speed;
+            s.evy = (dy / dist) * speed;
+          }
+          s.x += s.evx;
+          s.y += s.evy;
+          sx = s.x;
+          sy = s.y;
+          alpha *= 1 - explodeT;
+        }
+
+        const [r, g, b] = s.rgb;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${Math.max(alpha, 0)})`;
+        ctx.arc(sx, sy, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Soft glow behind the globe for atmosphere.
+      if (explodeT < 1) {
+        const glow = ctx.createRadialGradient(
+          cx,
+          cy,
+          0,
+          cx,
+          cy,
+          globeRadius * 2.1
+        );
+        const [gr, gg, gb] = colors[1];
+        glow.addColorStop(0, `rgba(${gr}, ${gg}, ${gb}, ${0.16 * (1 - explodeT)})`);
+        glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      // Gentle auto-rotation plus a subtle tilt toward the pointer.
+      pointer.x += (pointer.targetX - pointer.x) * 0.04;
+      pointer.y += (pointer.targetY - pointer.y) * 0.04;
+      const rotY = frame * 0.0032 + pointer.x * 0.35;
+      const rotX = Math.sin(frame * 0.0011) * 0.25 + pointer.y * 0.2;
 
       for (const p of points) {
         const { screenX, screenY, depth, perspective } = project(
@@ -199,12 +284,19 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       raf = requestAnimationFrame(step);
     };
 
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.targetX = (e.clientX - rect.left) / rect.width - 0.5;
+      pointer.targetY = (e.clientY - rect.top) / rect.height - 0.5;
+    };
+
     resize();
     window.addEventListener("resize", resize);
 
     if (reduceMotion) {
       step();
     } else {
+      window.addEventListener("pointermove", onPointerMove);
       raf = requestAnimationFrame(step);
     }
 
@@ -218,6 +310,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
     };
   }, [reduceMotion]);
 
