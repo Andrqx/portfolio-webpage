@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Your Name — Software Engineer",
-  description: "Portfolio of Your Name, software engineer.",
+  title: "Andrew Evans — Mechanical Engineer",
+  description: "Portfolio of Andrew Evans, mechanical engineering student and chassis lead at Mac Formula Electric.",
 };
 
 export default function RootLayout({
