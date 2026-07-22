@@ -25,22 +25,35 @@ export default function Projects() {
         </Reveal>
 
         <Reveal delay={0.05} className="mb-12">
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
             {teams.map((team) => {
               const active = team.key === activeTeam;
               return (
-                <button
+                <motion.button
                   key={team.key}
                   type="button"
                   onClick={() => setActiveTeam(team.key)}
-                  className={`font-mono text-xs uppercase tracking-widest rounded-full px-4 py-2 border transition-colors ${
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  style={
                     active
-                      ? "bg-foreground text-background border-foreground"
-                      : "border-border text-muted hover:text-foreground"
+                      ? {
+                          background:
+                            "linear-gradient(100deg, var(--accent), var(--accent-2), var(--accent-3))",
+                          boxShadow:
+                            "0 0 28px rgba(255,46,99,0.5), 0 0 52px rgba(162,75,255,0.3)",
+                        }
+                      : undefined
+                  }
+                  className={`font-mono text-xs md:text-sm uppercase tracking-widest rounded-full px-6 py-3 border-2 transition-colors ${
+                    active
+                      ? "border-transparent text-white font-bold"
+                      : "border-border text-muted hover:text-foreground hover:border-accent/60"
                   }`}
                 >
                   {team.label}
-                </button>
+                </motion.button>
               );
             })}
           </div>

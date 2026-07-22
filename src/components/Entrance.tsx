@@ -49,29 +49,37 @@ type Blob = {
 };
 
 type PixelDot = {
-  // True scattered position across the full canvas — no zoom/magnification,
-  // so every dot is always within bounds and nothing pops in from off-screen.
+  // True scattered position across the full canvas.
   x: number;
   y: number;
   rgb: RGB;
   size: number;
   alpha: number;
-  appearAt: number;
-  growMs: number;
+  // Reveal is driven by the loading percentage itself, not elapsed time —
+  // this dot starts appearing once percent passes revealAt, and is fully
+  // in by revealAt + growSpan (both in percent-points, capped at 100).
+  revealAt: number;
+  growSpan: number;
   fadeOutOffset: number;
   fadeOutMs: number;
 };
 
-const COUNT_MS = 1650;
-const HOLD_MS = 200;
-const PIXEL_MS = 2200;
-const PIXEL_FADE_MS = 900;
+type Comet = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  rgb: RGB;
+};
+
+const COUNT_MS = 2600;
+const HOLD_AT_100_MS = 350;
+const FADE_MS = 900;
 const SKIP_FADE_MS = 500;
 const BLOB_COUNT = 4;
 const PIXEL_DOT_COUNT = 340;
-const PIXEL_STAGGER_MS = 700;
-const PIXEL_GROW_MIN_MS = 250;
-const PIXEL_GROW_MAX_MS = 450;
 const PIXEL_FADEOUT_STAGGER_MS = 300;
 const PIXEL_FADEOUT_MIN_MS = 400;
 const PIXEL_FADEOUT_MAX_MS = 700;
@@ -87,11 +95,10 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
   const [percent, setPercent] = useState(0);
   const [showCounter, setShowCounter] = useState(true);
   const [leaving, setLeaving] = useState(false);
-  const [fadeMs, setFadeMs] = useState(PIXEL_FADE_MS);
+  const [fadeMs, setFadeMs] = useState(FADE_MS);
   const [visible, setVisible] = useState(true);
   const dismissedRef = useRef(false);
-  const phaseRef = useRef<"counting" | "pixels">("counting");
-  const pixelStartRef = useRef(0);
+  const percentRef = useRef(0);
   const fadeStartRef = useRef(0);
   const timersRef = useRef<number[]>([]);
   const reduceMotion = useMemo(
@@ -111,11 +118,27 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     onEnter();
   };
 
-  // Skip: fast-forward straight past both the counter and the burst.
+  const beginFadeOut = () => {
+    if (dismissedRef.current) return;
+    setShowCounter(false);
+    setFadeMs(FADE_MS);
+    setLeaving(true);
+    fadeStartRef.current = performance.now();
+    dispatchEntranceComplete();
+    const t = window.setTimeout(() => {
+      if (dismissedRef.current) return;
+      dismissedRef.current = true;
+      finish();
+    }, FADE_MS);
+    timersRef.current.push(t);
+  };
+
+  // Skip: fast-forward straight to 100% and fade out immediately.
   const handleSkip = () => {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
     clearTimers();
+    percentRef.current = 100;
     setPercent(100);
     setShowCounter(false);
     setFadeMs(reduceMotion ? 150 : SKIP_FADE_MS);
@@ -126,40 +149,16 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     timersRef.current.push(t);
   };
 
-  const beginPixels = () => {
-    if (dismissedRef.current) return;
-    phaseRef.current = "pixels";
-    pixelStartRef.current = performance.now();
-    setShowCounter(false);
-
-    const fadeDelay = Math.max(PIXEL_MS - PIXEL_FADE_MS, 0);
-    const t1 = window.setTimeout(() => {
-      if (dismissedRef.current) return;
-      setFadeMs(PIXEL_FADE_MS);
-      setLeaving(true);
-      fadeStartRef.current = performance.now();
-      dispatchEntranceComplete();
-    }, fadeDelay);
-    const t2 = window.setTimeout(() => {
-      if (dismissedRef.current) return;
-      dismissedRef.current = true;
-      finish();
-    }, PIXEL_MS);
-    timersRef.current.push(t1, t2);
-  };
-
-  // Counts up to 100, holds briefly, then hands off to the pixel reveal.
+  // Counts up to 100 — pixels reveal in lockstep with the percentage via
+  // percentRef, which the canvas loop reads directly (see below). Once it
+  // hits 100, holds briefly on the full field before fading to the hero.
   useEffect(() => {
     if (reduceMotion) {
       const t = window.setTimeout(() => {
         if (dismissedRef.current) return;
-        dismissedRef.current = true;
+        percentRef.current = 100;
         setPercent(100);
-        setShowCounter(false);
-        setFadeMs(150);
-        setLeaving(true);
-        dispatchEntranceComplete();
-        window.setTimeout(finish, 150);
+        beginFadeOut();
       }, 300);
       timersRef.current.push(t);
       return () => clearTimers();
@@ -195,11 +194,12 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         }
       }
 
+      percentRef.current = pct;
       setPercent(pct);
       if (t < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        const holdTimer = window.setTimeout(beginPixels, HOLD_MS);
+        const holdTimer = window.setTimeout(beginFadeOut, HOLD_AT_100_MS);
         timersRef.current.push(holdTimer);
       }
     };
@@ -208,7 +208,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       cancelAnimationFrame(raf);
       clearTimers();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- beginPixels is stable for the component's lifetime
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- beginFadeOut is stable for the component's lifetime
   }, [reduceMotion]);
 
   // Pixelated counter: render the percentage onto a tiny low-res canvas, then
@@ -236,13 +236,11 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     ctx.putImageData(img, 0, 0);
   }, [percent]);
 
-  // Canvas: the drifting gradient-blob background runs continuously for the
-  // whole entrance (never cuts), so there's no hard switch between phases.
-  // Once the pixel phase begins, a field of glowy dots (matching the hero's
-  // particle style) fades in on top of it, each at its true final position
-  // with its own staggered delay — pixels appear throughout the screen
-  // rather than emanating from one point — before the whole layer dissolves
-  // into the real hero background.
+  // Canvas: a drifting gradient-blob background runs continuously for the
+  // whole entrance (never cuts). Pixel dots reveal in step with the loading
+  // percentage — more of the field lights up as it climbs, all of it lit by
+  // 100 — then the whole layer dissolves into the real hero background.
+  // Occasional shooting stars streak across while the loading is active.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -255,9 +253,11 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     let height = 0;
     let raf = 0;
     let frame = 0;
+    let nextCometAt = 70 + Math.random() * 100;
 
     let blobs: Blob[] = [];
     let pixelDots: PixelDot[] = [];
+    let comets: Comet[] = [];
 
     const makeBlobs = () => {
       blobs = Array.from({ length: BLOB_COUNT }, (_, i) => ({
@@ -272,23 +272,42 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     };
 
     const makePixelDots = () => {
-      // Scattered at their true final position across the whole canvas —
-      // each one fades/grows in on its own schedule, so they appear
-      // throughout the screen rather than emerging from a single point.
-      pixelDots = Array.from({ length: PIXEL_DOT_COUNT }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
+      // Scattered at their true final position across the whole canvas.
+      // revealAt/growSpan are chosen so every dot finishes appearing by
+      // percent === 100, spread across the climb rather than at the end.
+      pixelDots = Array.from({ length: PIXEL_DOT_COUNT }, () => {
+        const revealAt = Math.random() * 78;
+        const growSpan = 14 + Math.random() * 8;
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          rgb: sampleRamp(colors, Math.random()),
+          size: 1.2 + Math.random() * 2,
+          alpha: 0.28 + Math.random() * 0.32,
+          revealAt,
+          growSpan,
+          fadeOutOffset: Math.random() * PIXEL_FADEOUT_STAGGER_MS,
+          fadeOutMs:
+            PIXEL_FADEOUT_MIN_MS +
+            Math.random() * (PIXEL_FADEOUT_MAX_MS - PIXEL_FADEOUT_MIN_MS),
+        };
+      });
+    };
+
+    const spawnComet = (): Comet => {
+      const fromLeft = Math.random() < 0.5;
+      const y = Math.random() * height * 0.6;
+      const speed = 7 + Math.random() * 5;
+      const angle = (fromLeft ? 1 : -1) * (0.25 + Math.random() * 0.2);
+      return {
+        x: fromLeft ? -20 : width + 20,
+        y,
+        vx: Math.cos(angle) * speed * (fromLeft ? 1 : -1),
+        vy: Math.sin(angle) * speed,
+        life: 0,
+        maxLife: 60 + Math.random() * 30,
         rgb: sampleRamp(colors, Math.random()),
-        size: 1.2 + Math.random() * 2,
-        alpha: 0.28 + Math.random() * 0.32,
-        appearAt: Math.random() * PIXEL_STAGGER_MS,
-        growMs:
-          PIXEL_GROW_MIN_MS + Math.random() * (PIXEL_GROW_MAX_MS - PIXEL_GROW_MIN_MS),
-        fadeOutOffset: Math.random() * PIXEL_FADEOUT_STAGGER_MS,
-        fadeOutMs:
-          PIXEL_FADEOUT_MIN_MS +
-          Math.random() * (PIXEL_FADEOUT_MAX_MS - PIXEL_FADEOUT_MIN_MS),
-      }));
+      };
     };
 
     const resize = () => {
@@ -329,15 +348,16 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
 
     const drawPixelDots = () => {
       const now = performance.now();
-      const elapsed = now - pixelStartRef.current;
       const fadeElapsed = fadeStartRef.current ? now - fadeStartRef.current : -1;
+      const currentPercent = percentRef.current;
 
       // A cheap two-circle glow (soft wide + bright core) instead of
       // ctx.shadowBlur, which is expensive to run per-shape at this count.
       for (const d of pixelDots) {
-        const local = elapsed - d.appearAt;
-        if (local <= 0) continue;
-        const t = Math.min(local / d.growMs, 1);
+        const t = Math.min(
+          Math.max((currentPercent - d.revealAt) / d.growSpan, 0),
+          1
+        );
         const eased = easeOutCubic(t);
         if (eased <= 0) continue;
 
@@ -370,14 +390,40 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       }
     };
 
+    const drawComets = () => {
+      if (!fadeStartRef.current && frame >= nextCometAt) {
+        comets.push(spawnComet());
+        nextCometAt = frame + 150 + Math.random() * 220;
+      }
+      for (const c of comets) {
+        const tailX = c.x - c.vx * 6;
+        const tailY = c.y - c.vy * 6;
+        const [r, g, b] = c.rgb;
+        const fade = 1 - c.life / c.maxLife;
+        const grad = ctx.createLinearGradient(tailX, tailY, c.x, c.y);
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${0.75 * fade})`);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(c.x, c.y);
+        ctx.stroke();
+
+        c.x += c.vx;
+        c.y += c.vy;
+        c.life += 1;
+      }
+      comets = comets.filter(
+        (c) => c.life < c.maxLife && c.x > -40 && c.x < width + 40
+      );
+    };
+
     const step = () => {
       frame += 1;
-      // The blob background never stops — pixels simply fade in on top of
-      // it, so there's no hard cut between the two phases.
       drawBlobBackground();
-      if (phaseRef.current === "pixels") {
-        drawPixelDots();
-      }
+      drawComets();
+      drawPixelDots();
       raf = requestAnimationFrame(step);
     };
 
