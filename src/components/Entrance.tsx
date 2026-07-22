@@ -47,10 +47,10 @@ type Blob = {
   phase: number;
 };
 
-type BurstDot = {
-  // Unit-disk position — scaled up by the animating burst radius each frame.
-  ux: number;
-  uy: number;
+type ZoomDot = {
+  // True scattered position across the full canvas.
+  tx: number;
+  ty: number;
   rgb: RGB;
   size: number;
   alpha: number;
@@ -58,27 +58,29 @@ type BurstDot = {
 
 const COUNT_MS = 2100;
 const HOLD_MS = 200;
-const BURST_MS = 1200;
-const BURST_FADE_MS = 550;
+const ZOOM_MS = 1400;
+const ZOOM_FADE_MS = 650;
 const SKIP_FADE_MS = 500;
 const BLOB_COUNT = 4;
-const BURST_DOT_COUNT = 260;
+const ZOOM_DOT_COUNT = 340;
+const ZOOM_START_SCALE = 3.4;
 
-/** Ease-out-cubic: a smooth, steady expand rather than an instant pop. */
+/** Ease-out-cubic: a smooth, steady motion rather than an instant pop. */
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
 export default function Entrance({ onEnter }: { onEnter: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const counterCanvasRef = useRef<HTMLCanvasElement>(null);
   const [percent, setPercent] = useState(0);
   const [showCounter, setShowCounter] = useState(true);
   const [leaving, setLeaving] = useState(false);
-  const [fadeMs, setFadeMs] = useState(BURST_FADE_MS);
+  const [fadeMs, setFadeMs] = useState(ZOOM_FADE_MS);
   const [visible, setVisible] = useState(true);
   const dismissedRef = useRef(false);
-  const phaseRef = useRef<"counting" | "bursting">("counting");
-  const burstStartRef = useRef(0);
+  const phaseRef = useRef<"counting" | "zoom">("counting");
+  const zoomStartRef = useRef(0);
   const timersRef = useRef<number[]>([]);
   const reduceMotion = useMemo(
     () =>
@@ -110,27 +112,27 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     timersRef.current.push(t);
   };
 
-  const beginBurst = () => {
+  const beginZoom = () => {
     if (dismissedRef.current) return;
-    phaseRef.current = "bursting";
-    burstStartRef.current = performance.now();
+    phaseRef.current = "zoom";
+    zoomStartRef.current = performance.now();
     setShowCounter(false);
 
-    const fadeDelay = Math.max(BURST_MS - BURST_FADE_MS, 0);
+    const fadeDelay = Math.max(ZOOM_MS - ZOOM_FADE_MS, 0);
     const t1 = window.setTimeout(() => {
       if (dismissedRef.current) return;
-      setFadeMs(BURST_FADE_MS);
+      setFadeMs(ZOOM_FADE_MS);
       setLeaving(true);
     }, fadeDelay);
     const t2 = window.setTimeout(() => {
       if (dismissedRef.current) return;
       dismissedRef.current = true;
       finish();
-    }, BURST_MS);
+    }, ZOOM_MS);
     timersRef.current.push(t1, t2);
   };
 
-  // Counts up to 100, holds briefly, then hands off to the burst.
+  // Counts up to 100, holds briefly, then hands off to the zoom-out reveal.
   useEffect(() => {
     if (reduceMotion) {
       const t = window.setTimeout(() => {
@@ -155,7 +157,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       if (t < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        const holdTimer = window.setTimeout(beginBurst, HOLD_MS);
+        const holdTimer = window.setTimeout(beginZoom, HOLD_MS);
         timersRef.current.push(holdTimer);
       }
     };
@@ -164,12 +166,28 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       cancelAnimationFrame(raf);
       clearTimers();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- beginBurst is stable for the component's lifetime
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- beginZoom is stable for the component's lifetime
   }, [reduceMotion]);
 
-  // Canvas: drifting gradient-blob background while counting, then a small
-  // cluster of glowy dots (matching the hero's particle style) that expands
-  // to cover the screen, handing off into the real hero background.
+  // Pixelated counter: render the percentage onto a tiny low-res canvas and
+  // let the browser upscale it with hard edges (no manual pixel math needed).
+  useEffect(() => {
+    const c = counterCanvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.fillStyle = "#f2f1ec";
+    ctx.font = "700 11px ui-monospace, 'Courier New', monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${percent}%`, c.width / 2, c.height / 2 + 1);
+  }, [percent]);
+
+  // Canvas: drifting gradient-blob background while counting, then a field
+  // of glowy dots (matching the hero's particle style) scattered across the
+  // whole screen that zooms out from a magnified view to its true scale,
+  // handing off into the real hero background as it settles.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -184,8 +202,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     let frame = 0;
 
     let blobs: Blob[] = [];
-    let burstDots: BurstDot[] = [];
-    let burstMaxRadius = 0;
+    let zoomDots: ZoomDot[] = [];
 
     const makeBlobs = () => {
       blobs = Array.from({ length: BLOB_COUNT }, (_, i) => ({
@@ -199,20 +216,16 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       }));
     };
 
-    const makeBurstDots = () => {
-      burstMaxRadius = Math.hypot(width, height) * 0.62;
-      burstDots = Array.from({ length: BURST_DOT_COUNT }, () => {
-        // Uniform distribution across a unit disk.
-        const r = Math.sqrt(Math.random());
-        const theta = Math.random() * Math.PI * 2;
-        return {
-          ux: Math.cos(theta) * r,
-          uy: Math.sin(theta) * r,
-          rgb: sampleRamp(colors, Math.random()),
-          size: 1.3 + Math.random() * 2.2,
-          alpha: 0.45 + Math.random() * 0.45,
-        };
-      });
+    const makeZoomDots = () => {
+      // Scattered across the whole canvas — the zoom animation reveals
+      // them by pulling back from a magnified view of just the center.
+      zoomDots = Array.from({ length: ZOOM_DOT_COUNT }, () => ({
+        tx: Math.random() * width,
+        ty: Math.random() * height,
+        rgb: sampleRamp(colors, Math.random()),
+        size: 1.2 + Math.random() * 2,
+        alpha: 0.45 + Math.random() * 0.45,
+      }));
     };
 
     const resize = () => {
@@ -224,7 +237,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       makeBlobs();
-      makeBurstDots();
+      makeZoomDots();
     };
 
     const drawBlobBackground = () => {
@@ -251,32 +264,30 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       ctx.globalCompositeOperation = "source-over";
     };
 
-    const drawBurst = () => {
+    const drawZoom = () => {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
 
       const cx = width / 2;
       const cy = height / 2;
-      const elapsed = performance.now() - burstStartRef.current;
-      const t = Math.min(elapsed / BURST_MS, 1);
+      const elapsed = performance.now() - zoomStartRef.current;
+      const t = Math.min(elapsed / ZOOM_MS, 1);
       const eased = easeOutCubic(t);
-      const currentRadius = 4 + eased * burstMaxRadius;
-      const rotation = eased * 0.5;
-      const cos = Math.cos(rotation);
-      const sin = Math.sin(rotation);
-      const sizeScale = 1 + eased * 1.4;
+      // Camera-style zoom: scale starts high (magnified, only a few dots
+      // near center are on-screen and look big) and eases down to 1
+      // (true positions/sizes), pulling back to reveal the full field.
+      const scale = ZOOM_START_SCALE - eased * (ZOOM_START_SCALE - 1);
 
-      ctx.shadowBlur = 8;
-      for (const d of burstDots) {
-        const rx = d.ux * cos - d.uy * sin;
-        const ry = d.ux * sin + d.uy * cos;
-        const x = cx + rx * currentRadius;
-        const y = cy + ry * currentRadius;
+      ctx.shadowBlur = 6;
+      for (const d of zoomDots) {
+        const x = cx + (d.tx - cx) * scale;
+        const y = cy + (d.ty - cy) * scale;
+        if (x < -20 || x > width + 20 || y < -20 || y > height + 20) continue;
         const [r, g, b] = d.rgb;
         ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${d.alpha})`;
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${d.alpha})`;
         ctx.beginPath();
-        ctx.arc(x, y, d.size * sizeScale, 0, Math.PI * 2);
+        ctx.arc(x, y, d.size * scale, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.shadowBlur = 0;
@@ -287,7 +298,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       if (phaseRef.current === "counting") {
         drawBlobBackground();
       } else {
-        drawBurst();
+        drawZoom();
       }
       raf = requestAnimationFrame(step);
     };
@@ -338,11 +349,18 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="relative z-10 flex flex-col items-center gap-2"
+                className="relative z-10 flex flex-col items-center gap-3"
               >
-                <span className="font-mono text-2xl md:text-3xl font-medium tabular-nums tracking-tight text-foreground">
-                  {percent}%
-                </span>
+                <canvas
+                  ref={counterCanvasRef}
+                  width={44}
+                  height={22}
+                  style={{
+                    width: 88,
+                    height: 44,
+                    imageRendering: "pixelated",
+                  }}
+                />
                 <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted">
                   Loading experience
                 </span>
