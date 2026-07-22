@@ -38,13 +38,24 @@ function sampleRamp(colors: RGB[], t: number): RGB {
 }
 
 type Particle = {
+  homeX: number;
+  homeY: number;
   x: number;
   y: number;
-  life: number;
-  maxLife: number;
-  speed: number;
-  color: string;
+  vx: number;
+  vy: number;
+  radius: number;
+  drift: number;
+  driftPhase: number;
+  rgb: RGB;
+  alpha: number;
 };
+
+const LINK_DIST = 130;
+const REPEL_RADIUS = 150;
+const REPEL_STRENGTH = 2600;
+const SPRING = 0.02;
+const DAMPING = 0.9;
 
 export default function TechnoBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -66,18 +77,24 @@ export default function TechnoBackground() {
     let particles: Particle[] = [];
     let frame = 0;
     let raf = 0;
-    const pointer = { x: 0.5, y: 0.5, active: false };
+    const pointer = { x: -9999, y: -9999, active: false };
 
-    const spawn = (): Particle => {
-      const t = Math.random();
-      const [r, g, b] = sampleRamp(colors, t);
+    const makeParticle = (): Particle => {
+      const homeX = Math.random() * width;
+      const homeY = Math.random() * height;
+      const rgb = sampleRamp(colors, Math.random());
       return {
-        x: Math.random() * width,
-        y: Math.random() * height,
-        life: 0,
-        maxLife: 120 + Math.random() * 220,
-        speed: 0.45 + Math.random() * 1.1,
-        color: `rgba(${r}, ${g}, ${b}, 0.65)`,
+        homeX,
+        homeY,
+        x: homeX,
+        y: homeY,
+        vx: 0,
+        vy: 0,
+        radius: 1.3 + Math.random() * 2.2,
+        drift: 6 + Math.random() * 10,
+        driftPhase: Math.random() * Math.PI * 2,
+        rgb,
+        alpha: 0.45 + Math.random() * 0.45,
       };
     };
 
@@ -92,64 +109,72 @@ export default function TechnoBackground() {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
 
-      // Scale density with viewport area, but keep a hard ceiling for perf.
-      const target = Math.min(Math.round((width * height) / 5200), 420);
-      particles = Array.from({ length: target }, spawn);
+      const target = Math.min(Math.round((width * height) / 9000), 190);
+      particles = Array.from({ length: target }, makeParticle);
     };
-
-    // Cheap smooth vector field — no noise library needed.
-    const fieldAngle = (x: number, y: number, t: number) =>
-      (Math.sin(x * 0.0016 + t) + Math.cos(y * 0.0016 - t * 0.7)) * Math.PI;
 
     const step = () => {
       frame += 1;
-      const t = frame * 0.0016;
+      const t = frame * 0.02;
 
-      // Translucent wash creates the trail effect.
-      ctx.fillStyle = "rgba(8, 8, 10, 0.075)";
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
-      ctx.lineWidth = 1.1;
 
+      // Idle wobble around each particle's home position, plus a spring
+      // pulling it back home and a repulsion push away from the pointer.
       for (const p of particles) {
-        const angle = fieldAngle(p.x, p.y, t);
-        let vx = Math.cos(angle) * p.speed;
-        let vy = Math.sin(angle) * p.speed;
+        const targetX = p.homeX + Math.cos(t + p.driftPhase) * p.drift;
+        const targetY = p.homeY + Math.sin(t * 0.8 + p.driftPhase) * p.drift;
 
-        // Gentle swirl away from the pointer.
+        p.vx += (targetX - p.x) * SPRING;
+        p.vy += (targetY - p.y) * SPRING;
+
         if (pointer.active) {
-          const dx = p.x - pointer.x * width;
-          const dy = p.y - pointer.y * height;
+          const dx = p.x - pointer.x;
+          const dy = p.y - pointer.y;
           const dist2 = dx * dx + dy * dy;
-          if (dist2 < 40000 && dist2 > 1) {
-            const falloff = (40000 - dist2) / 40000;
+          if (dist2 < REPEL_RADIUS * REPEL_RADIUS && dist2 > 4) {
             const dist = Math.sqrt(dist2);
-            vx += (-dy / dist) * falloff * 1.6;
-            vy += (dx / dist) * falloff * 1.6;
+            const force = (REPEL_STRENGTH / dist2) * (1 - dist / REPEL_RADIUS);
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
           }
         }
 
-        const nx = p.x + vx;
-        const ny = p.y + vy;
+        p.vx *= DAMPING;
+        p.vy *= DAMPING;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
 
-        ctx.strokeStyle = p.color;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(nx, ny);
-        ctx.stroke();
-
-        p.x = nx;
-        p.y = ny;
-        p.life += 1;
-
-        if (
-          p.life > p.maxLife ||
-          p.x < -20 ||
-          p.x > width + 20 ||
-          p.y < -20 ||
-          p.y > height + 20
-        ) {
-          Object.assign(p, spawn(), { life: 0 });
+      // Faint network lines between nearby particles.
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i += 1) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j += 1) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist2 = dx * dx + dy * dy;
+          if (dist2 < LINK_DIST * LINK_DIST) {
+            const t2 = 1 - Math.sqrt(dist2) / LINK_DIST;
+            const [r, g, bch] = a.rgb;
+            ctx.strokeStyle = `rgba(${r}, ${g}, ${bch}, ${t2 * 0.22})`;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
         }
+      }
+
+      // Dots on top of the links.
+      for (const p of particles) {
+        const [r, g, b] = p.rgb;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.alpha})`;
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
       }
     };
 
@@ -160,8 +185,8 @@ export default function TechnoBackground() {
 
     const onPointerMove = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
-      pointer.x = (e.clientX - rect.left) / rect.width;
-      pointer.y = (e.clientY - rect.top) / rect.height;
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
       pointer.active = true;
     };
     const onPointerLeave = () => {
@@ -177,8 +202,8 @@ export default function TechnoBackground() {
     document.addEventListener("visibilitychange", onVisibility);
 
     if (reduceMotion) {
-      // Render a static textured frame — no rAF, no motion.
-      for (let i = 0; i < 70; i += 1) step();
+      // Render a single static frame — no rAF, no motion.
+      step();
     } else {
       window.addEventListener("pointermove", onPointerMove);
       window.addEventListener("pointerleave", onPointerLeave);
@@ -202,7 +227,7 @@ export default function TechnoBackground() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 45%, rgba(8,8,10,0.55) 0%, rgba(8,8,10,0.82) 55%, #08080a 100%)",
+            "radial-gradient(ellipse at 50% 45%, rgba(8,8,10,0.35) 0%, rgba(8,8,10,0.75) 55%, #08080a 100%)",
         }}
       />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
