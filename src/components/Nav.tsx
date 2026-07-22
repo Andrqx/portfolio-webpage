@@ -32,7 +32,6 @@ export default function Nav() {
       <nav className="mx-auto max-w-6xl px-6 md:px-10 h-20 flex items-center justify-between">
         <a
           href="#top"
-          data-cursor-hover
           className="font-mono text-sm tracking-tight text-foreground"
         >
           {profile.name}
@@ -42,7 +41,6 @@ export default function Nav() {
             <li key={link.href}>
               <a
                 href={link.href}
-                data-cursor-hover
                 className="hover:text-foreground transition-colors"
               >
                 {link.label}
@@ -52,7 +50,6 @@ export default function Nav() {
         </ul>
         <a
           href="#contact"
-          data-cursor-hover
           className="font-mono text-xs uppercase tracking-widest border border-border rounded-full px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
         >
           Let&apos;s talk

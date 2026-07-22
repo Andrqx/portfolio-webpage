@@ -4,8 +4,9 @@
   --background: #08080a;
   --foreground: #f2f1ec;
   --muted: #8a8a92;
-  --accent: #c8ff3d;
-  --accent-2: #ff4fd8;
+  --accent: #ff2e63;
+  --accent-2: #a24bff;
+  --accent-3: #ff5fd2;
   --border: rgba(242, 241, 236, 0.12);
 }
 
@@ -15,6 +16,7 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
   --color-border: var(--border);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-geist-mono);
@@ -38,7 +40,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #08080a;
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar {
@@ -64,17 +66,28 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@media (pointer: fine) {
-  .cursor-none-desktop {
-    cursor: none;
-  }
-}
-
 .gradient-text {
-  background: linear-gradient(100deg, var(--accent), var(--accent-2));
+  background: linear-gradient(
+    100deg,
+    var(--accent),
+    var(--accent-2),
+    var(--accent-3)
+  );
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: gradient-drift 12s ease-in-out infinite;
+}
+
+@keyframes gradient-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes marquee {
@@ -88,4 +101,14 @@ body {
 
 .animate-marquee {
   animation: marquee 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .gradient-text {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

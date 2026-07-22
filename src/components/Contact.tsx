@@ -16,7 +16,6 @@ export default function Contact() {
         <Reveal delay={0.1}>
           <motion.a
             href={`mailto:${profile.email}`}
-            data-cursor-hover
             whileHover={{ letterSpacing: "0.01em" }}
             className="block text-[10vw] md:text-[5.5vw] leading-none font-bold tracking-tight gradient-text mb-12"
           >
@@ -25,7 +24,7 @@ export default function Contact() {
         </Reveal>
         <Reveal delay={0.2}>
           <div className="flex flex-wrap gap-x-10 gap-y-4 font-mono text-sm uppercase tracking-widest text-muted">
-            <a href={`mailto:${profile.email}`} data-cursor-hover className="hover:text-foreground transition-colors">
+            <a href={`mailto:${profile.email}`} className="hover:text-foreground transition-colors">
               {profile.email}
             </a>
             {profile.socials.map((social) => (
@@ -34,7 +33,6 @@ export default function Contact() {
                 href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                data-cursor-hover
                 className="hover:text-foreground transition-colors"
               >
                 {social.label}
