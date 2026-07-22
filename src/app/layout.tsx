@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "@/components/CustomCursor";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -28,9 +27,8 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col cursor-none-desktop">
+      <body className="min-h-full flex flex-col">
         <div className="noise-overlay" />
-        <CustomCursor />
         {children}
       </body>
     </html>

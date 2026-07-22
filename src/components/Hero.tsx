@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import TechnoBackground from "@/components/TechnoBackground";
 import { profile } from "@/data/content";
 
 const headline = profile.tagline.split(" ");
@@ -11,18 +12,9 @@ export default function Hero() {
       id="top"
       className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden px-6 md:px-10"
     >
-      <div
-        aria-hidden
-        className="absolute -top-40 -left-40 h-[32rem] w-[32rem] rounded-full blur-[120px] opacity-30"
-        style={{ background: "var(--accent)" }}
-      />
-      <div
-        aria-hidden
-        className="absolute -bottom-40 -right-20 h-[28rem] w-[28rem] rounded-full blur-[120px] opacity-25"
-        style={{ background: "var(--accent-2)" }}
-      />
+      <TechnoBackground />
 
-      <div className="relative mx-auto max-w-6xl w-full">
+      <div className="relative z-10 mx-auto max-w-6xl w-full">
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,14 +53,12 @@ export default function Hero() {
         >
           <a
             href="#work"
-            data-cursor-hover
             className="font-mono text-xs uppercase tracking-widest bg-foreground text-background rounded-full px-6 py-3 hover:opacity-90 transition-opacity"
           >
             View work
           </a>
           <a
             href="#contact"
-            data-cursor-hover
             className="font-mono text-xs uppercase tracking-widest border border-border rounded-full px-6 py-3 hover:bg-foreground hover:text-background transition-colors"
           >
             Get in touch
@@ -80,7 +70,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted flex flex-col items-center gap-2"
+        className="absolute z-10 bottom-10 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted flex flex-col items-center gap-2"
       >
         <span>Scroll</span>
         <motion.span
