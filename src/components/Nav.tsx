@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
 const links = [
@@ -13,6 +14,7 @@ const links = [
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const { ready, flash } = useEntranceReveal();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -23,11 +25,11 @@ export default function Nav() {
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={ready ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed top-0 inset-x-0 z-40 transition-colors duration-300 ${
         scrolled ? "backdrop-blur-md bg-background/70 border-b border-border" : ""
-      }`}
+      } ${flash ? "animate-lightning-flash" : ""}`}
     >
       <nav className="mx-auto max-w-6xl px-6 md:px-10 h-20 flex items-center justify-between">
         <a
