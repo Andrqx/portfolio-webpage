@@ -77,8 +77,8 @@ type Comet = {
 };
 
 const PARTICLE_COUNT = 480;
-const STAR_COUNT = 170;
-const EXPLODE_MS = 950;
+const STAR_COUNT = 220;
+const EXPLODE_MS = 1500;
 const FLASH_MS = 220;
 const RING_CONFIGS = [
   { rxFactor: 1.55, ryFactor: 0.42, speed: 0.0016, tilt: -0.32, colorIndex: 1 },
@@ -146,9 +146,9 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * 0.08,
         vy: (Math.random() - 0.5) * 0.08,
-        radius: 0.5 + Math.random() * 1.1,
+        radius: 0.6 + Math.random() * 1.5,
         rgb: sampleRamp(colors, Math.random()),
-        baseAlpha: 0.12 + Math.random() * 0.28,
+        baseAlpha: 0.32 + Math.random() * 0.45,
         twinkleSpeed: 0.008 + Math.random() * 0.02,
         twinklePhase: Math.random() * Math.PI * 2,
         evx: 0,
@@ -225,7 +225,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         let sy = s.y;
         let alpha =
           s.baseAlpha *
-          (0.6 + 0.4 * Math.sin(frame * s.twinkleSpeed + s.twinklePhase));
+          (0.5 + 0.5 * Math.sin(frame * s.twinkleSpeed + s.twinklePhase));
 
         if (explodeStart) {
           if (s.evx === 0 && s.evy === 0) {
@@ -283,11 +283,12 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         );
       }
 
-      // Soft glow behind the globe for atmosphere.
+      // Glow behind the globe for atmosphere.
       if (explodeT < 1) {
-        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, globeRadius * 2.1);
+        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, globeRadius * 2.6);
         const [gr, gg, gb] = colors[1];
-        glow.addColorStop(0, `rgba(${gr}, ${gg}, ${gb}, ${0.16 * (1 - explodeT)})`);
+        glow.addColorStop(0, `rgba(${gr}, ${gg}, ${gb}, ${0.34 * (1 - explodeT)})`);
+        glow.addColorStop(0.6, `rgba(${gr}, ${gg}, ${gb}, ${0.12 * (1 - explodeT)})`);
         glow.addColorStop(1, "rgba(0, 0, 0, 0)");
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, width, height);
@@ -303,13 +304,13 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       if (explodeT < 1) {
         for (const ring of RING_CONFIGS) {
           const [r, g, b] = colors[ring.colorIndex];
-          const ringAlpha = 0.2 * (1 - explodeT);
+          const ringAlpha = 0.42 * (1 - explodeT);
           ctx.save();
           ctx.translate(cx, cy);
           ctx.rotate(ring.tilt + frame * ring.speed);
           ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${ringAlpha})`;
-          ctx.lineWidth = 1;
-          ctx.setLineDash([2, 6]);
+          ctx.lineWidth = 1.4;
+          ctx.setLineDash([3, 7]);
           ctx.beginPath();
           ctx.ellipse(
             0,
@@ -368,9 +369,12 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         ctx.fill();
       }
 
-      // Shockwave ring + bright flash at the moment of the click.
+      // Shockwave ring + bright flash at the moment of the click. Eased
+      // (rather than linear) so the ring builds up gradually instead of
+      // snapping straight to full size.
       if (explodeStart) {
-        const shockRadius = explodeT * Math.max(width, height) * 0.75;
+        const shockEase = explodeT * explodeT * (3 - 2 * explodeT); // smoothstep
+        const shockRadius = shockEase * Math.max(width, height) * 0.75;
         const [sr, sg, sb] = colors[0];
         ctx.beginPath();
         ctx.strokeStyle = `rgba(${sr}, ${sg}, ${sb}, ${0.55 * (1 - explodeT)})`;
