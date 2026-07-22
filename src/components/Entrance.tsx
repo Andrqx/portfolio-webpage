@@ -54,6 +54,8 @@ type Point = {
 type Star = {
   x: number;
   y: number;
+  vx: number;
+  vy: number;
   radius: number;
   rgb: RGB;
   baseAlpha: number;
@@ -64,9 +66,24 @@ type Star = {
   evy: number;
 };
 
+type Comet = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  rgb: RGB;
+};
+
 const PARTICLE_COUNT = 480;
-const STAR_COUNT = 160;
-const EXPLODE_MS = 850;
+const STAR_COUNT = 170;
+const EXPLODE_MS = 950;
+const FLASH_MS = 220;
+const RING_CONFIGS = [
+  { rxFactor: 1.55, ryFactor: 0.42, speed: 0.0016, tilt: -0.32, colorIndex: 1 },
+  { rxFactor: 1.85, ryFactor: 0.55, speed: -0.001, tilt: 0.22, colorIndex: 2 },
+];
 
 /** Evenly distributes N points on a sphere via a golden-angle spiral. */
 function fibonacciSphere(count: number): Array<[number, number, number]> {
@@ -105,7 +122,9 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
     let raf = 0;
     let frame = 0;
     let explodeStart = 0;
+    let nextCometAt = 90 + Math.random() * 150;
     const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    let comets: Comet[] = [];
 
     const sphere = fibonacciSphere(PARTICLE_COUNT);
     const points: Point[] = sphere.map(([sx, sy, sz]) => ({
@@ -125,6 +144,8 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       stars = Array.from({ length: STAR_COUNT }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: (Math.random() - 0.5) * 0.08,
         radius: 0.5 + Math.random() * 1.1,
         rgb: sampleRamp(colors, Math.random()),
         baseAlpha: 0.12 + Math.random() * 0.28,
@@ -167,6 +188,22 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       return { screenX, screenY, depth, perspective };
     };
 
+    const spawnComet = (): Comet => {
+      const fromLeft = Math.random() < 0.5;
+      const y = Math.random() * height * 0.6;
+      const speed = 7 + Math.random() * 5;
+      const angle = (fromLeft ? 1 : -1) * (0.25 + Math.random() * 0.2);
+      return {
+        x: fromLeft ? -20 : width + 20,
+        y,
+        vx: Math.cos(angle) * speed * (fromLeft ? 1 : -1),
+        vy: Math.sin(angle) * speed,
+        life: 0,
+        maxLife: 60 + Math.random() * 30,
+        rgb: sampleRamp(colors, Math.random()),
+      };
+    };
+
     const step = () => {
       frame += 1;
       ctx.fillStyle = bg;
@@ -178,10 +215,11 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
 
       const elapsed = explodeStart ? performance.now() - explodeStart : 0;
       const explodeT = explodeStart ? Math.min(elapsed / EXPLODE_MS, 1) : 0;
+      const flashT = explodeStart ? Math.min(elapsed / FLASH_MS, 1) : 1;
 
       // Ambient starfield fills the rest of the viewport so it never reads
-      // as empty black space. Stars scatter outward on explode too, just
-      // slower than the globe, for a bit of parallax.
+      // as empty black space. Stars drift slowly and wrap at the edges;
+      // on explode they scatter outward like everything else, just slower.
       for (const s of stars) {
         let sx = s.x;
         let sy = s.y;
@@ -200,10 +238,13 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
           }
           s.x += s.evx;
           s.y += s.evy;
-          sx = s.x;
-          sy = s.y;
           alpha *= 1 - explodeT;
+        } else {
+          s.x = (s.x + s.vx + width) % width;
+          s.y = (s.y + s.vy + height) % height;
         }
+        sx = s.x;
+        sy = s.y;
 
         const [r, g, b] = s.rgb;
         ctx.beginPath();
@@ -212,16 +253,39 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         ctx.fill();
       }
 
+      // Occasional shooting stars streaking across the scene.
+      if (!explodeStart) {
+        if (frame >= nextCometAt) {
+          comets.push(spawnComet());
+          nextCometAt = frame + 150 + Math.random() * 220;
+        }
+        for (const c of comets) {
+          const tailX = c.x - c.vx * 6;
+          const tailY = c.y - c.vy * 6;
+          const [r, g, b] = c.rgb;
+          const fade = 1 - c.life / c.maxLife;
+          const grad = ctx.createLinearGradient(tailX, tailY, c.x, c.y);
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${0.75 * fade})`);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(c.x, c.y);
+          ctx.stroke();
+
+          c.x += c.vx;
+          c.y += c.vy;
+          c.life += 1;
+        }
+        comets = comets.filter(
+          (c) => c.life < c.maxLife && c.x > -40 && c.x < width + 40
+        );
+      }
+
       // Soft glow behind the globe for atmosphere.
       if (explodeT < 1) {
-        const glow = ctx.createRadialGradient(
-          cx,
-          cy,
-          0,
-          cx,
-          cy,
-          globeRadius * 2.1
-        );
+        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, globeRadius * 2.1);
         const [gr, gg, gb] = colors[1];
         glow.addColorStop(0, `rgba(${gr}, ${gg}, ${gb}, ${0.16 * (1 - explodeT)})`);
         glow.addColorStop(1, "rgba(0, 0, 0, 0)");
@@ -234,6 +298,33 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
       pointer.y += (pointer.targetY - pointer.y) * 0.04;
       const rotY = frame * 0.0032 + pointer.x * 0.35;
       const rotX = Math.sin(frame * 0.0011) * 0.25 + pointer.y * 0.2;
+
+      // Slow-rotating orbit rings around the globe, HUD-style.
+      if (explodeT < 1) {
+        for (const ring of RING_CONFIGS) {
+          const [r, g, b] = colors[ring.colorIndex];
+          const ringAlpha = 0.2 * (1 - explodeT);
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(ring.tilt + frame * ring.speed);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${ringAlpha})`;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 6]);
+          ctx.beginPath();
+          ctx.ellipse(
+            0,
+            0,
+            globeRadius * ring.rxFactor,
+            globeRadius * ring.ryFactor,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.stroke();
+          ctx.restore();
+        }
+        ctx.setLineDash([]);
+      }
 
       for (const p of points) {
         const { screenX, screenY, depth, perspective } = project(
@@ -254,7 +345,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
             const dx = screenX - cx || 0.001;
             const dy = screenY - cy || 0.001;
             const dist = Math.hypot(dx, dy) || 1;
-            const speed = 6 + Math.random() * 10;
+            const speed = 9 + Math.random() * 16;
             p.evx = (dx / dist) * speed;
             p.evy = (dy / dist) * speed;
             p.ex = screenX;
@@ -268,12 +359,39 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         }
 
         const [r, g, b] = p.rgb;
-        const size = (1.4 + depth * 1.6) * perspective * (explodeStart ? 1 + explodeT * 1.5 : 1);
+        const size =
+          (1.4 + depth * 1.6) * perspective * (explodeStart ? 1 + explodeT * 1.8 : 1);
 
         ctx.beginPath();
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${Math.max(alpha, 0)})`;
         ctx.arc(drawX, drawY, Math.max(size, 0.4), 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Shockwave ring + bright flash at the moment of the click.
+      if (explodeStart) {
+        const shockRadius = explodeT * Math.max(width, height) * 0.75;
+        const [sr, sg, sb] = colors[0];
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${sr}, ${sg}, ${sb}, ${0.55 * (1 - explodeT)})`;
+        ctx.lineWidth = 2.5 * (1 - explodeT) + 0.5;
+        ctx.arc(cx, cy, Math.max(shockRadius, 0), 0, Math.PI * 2);
+        ctx.stroke();
+
+        if (flashT < 1) {
+          const flash = ctx.createRadialGradient(
+            cx,
+            cy,
+            0,
+            cx,
+            cy,
+            Math.max(width, height) * 0.6
+          );
+          flash.addColorStop(0, `rgba(255, 255, 255, ${0.55 * (1 - flashT)})`);
+          flash.addColorStop(1, "rgba(255, 255, 255, 0)");
+          ctx.fillStyle = flash;
+          ctx.fillRect(0, 0, width, height);
+        }
       }
 
       if (explodeStart && explodeT >= 1) {
@@ -344,8 +462,8 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
               handleEnter();
             }
           }}
-          initial={{ opacity: 1 }}
-          animate={{ opacity: exploding ? 0 : 1 }}
+          initial={{ opacity: 1, scale: 1 }}
+          animate={{ opacity: exploding ? 0 : 1, scale: exploding ? 1.12 : 1 }}
           exit={{ opacity: 0 }}
           transition={{
             duration: reduceMotion ? 0.25 : EXPLODE_MS / 1000,
