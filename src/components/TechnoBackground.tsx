@@ -94,7 +94,7 @@ export default function TechnoBackground() {
         drift: 6 + Math.random() * 10,
         driftPhase: Math.random() * Math.PI * 2,
         rgb,
-        alpha: 0.45 + Math.random() * 0.45,
+        alpha: 0.6 + Math.random() * 0.4,
       };
     };
 

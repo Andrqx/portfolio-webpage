@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
@@ -14,7 +16,14 @@ const links = [
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const { ready, flash } = useEntranceReveal();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const { ready, flash } = useEntranceReveal(isHome);
+
+  // Section anchors only work as bare hashes on the homepage itself —
+  // from any other page (e.g. a project detail page) they need to route
+  // back to "/" first.
+  const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -32,30 +41,30 @@ export default function Nav() {
       } ${flash ? "animate-lightning-flash" : ""}`}
     >
       <nav className="mx-auto max-w-6xl px-6 md:px-10 h-20 flex items-center justify-between">
-        <a
-          href="#top"
+        <Link
+          href={sectionHref("#top")}
           className="font-mono text-sm tracking-tight text-foreground"
         >
           {profile.name}
-        </a>
+        </Link>
         <ul className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest text-muted">
           {links.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
+              <Link
+                href={sectionHref(link.href)}
                 className="hover:text-foreground transition-colors"
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
-        <a
-          href="#contact"
+        <Link
+          href={sectionHref("#contact")}
           className="font-mono text-xs uppercase tracking-widest border border-border rounded-full px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
         >
           Let&apos;s talk
-        </a>
+        </Link>
       </nav>
     </motion.header>
   );

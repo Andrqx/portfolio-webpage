@@ -280,7 +280,7 @@ export default function Entrance({ onEnter }: { onEnter: () => void }) {
         y: Math.random() * height,
         rgb: sampleRamp(colors, Math.random()),
         size: 1.2 + Math.random() * 2,
-        alpha: 0.45 + Math.random() * 0.45,
+        alpha: 0.28 + Math.random() * 0.32,
         appearAt: Math.random() * PIXEL_STAGGER_MS,
         growMs:
           PIXEL_GROW_MIN_MS + Math.random() * (PIXEL_GROW_MAX_MS - PIXEL_GROW_MIN_MS),
