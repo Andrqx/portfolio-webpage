@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { profile } from "@/data/content";
 
@@ -11,9 +12,20 @@ export default function About() {
           </p>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="text-2xl md:text-4xl leading-tight tracking-tight">
-            {profile.bio}
-          </p>
+          <div className="flex flex-col sm:flex-row gap-8 items-start">
+            <div className="relative w-full sm:w-64 md:w-72 aspect-[4/3] shrink-0 overflow-hidden rounded-lg border border-border">
+              <Image
+                src="/images/fsae-team.jpg"
+                alt="Andrew with the Mac Formula Electric team and car"
+                fill
+                sizes="(min-width: 640px) 18rem, 100vw"
+                className="object-cover"
+              />
+            </div>
+            <p className="text-xl md:text-2xl lg:text-3xl leading-tight tracking-tight">
+              {profile.bio}
+            </p>
+          </div>
         </Reveal>
       </div>
     </section>

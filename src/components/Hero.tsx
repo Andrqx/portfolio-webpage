@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { createTimeline, stagger } from "animejs";
 import TechnoBackground from "@/components/TechnoBackground";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
@@ -9,6 +11,56 @@ const headline = profile.tagline.split(" ");
 
 export default function Hero() {
   const { ready, flash } = useEntranceReveal();
+  const roleRef = useRef<HTMLParagraphElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const playedRef = useRef(false);
+
+  // Entrance sequence, built as a single anime.js timeline so the role
+  // label, headline words (staggered), buttons, and scroll hint all play
+  // as one continuous move instead of four independently-timed animations.
+  useEffect(() => {
+    if (!ready || playedRef.current) return;
+    playedRef.current = true;
+
+    const words = headlineRef.current?.querySelectorAll<HTMLElement>(".hero-word");
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
+      if (roleRef.current) roleRef.current.style.opacity = "1";
+      words?.forEach((w) => {
+        w.style.transform = "translateY(0%)";
+      });
+      if (buttonsRef.current) buttonsRef.current.style.opacity = "1";
+      if (scrollRef.current) scrollRef.current.style.opacity = "1";
+      return;
+    }
+
+    const tl = createTimeline({ defaults: { ease: "outExpo" } });
+    if (roleRef.current) {
+      tl.add(roleRef.current, { opacity: [0, 1], translateY: [12, 0], duration: 600 }, 0);
+    }
+    if (words && words.length) {
+      tl.add(
+        words,
+        { translateY: ["110%", "0%"], duration: 700, delay: stagger(80) },
+        150
+      );
+    }
+    if (buttonsRef.current) {
+      tl.add(
+        buttonsRef.current,
+        { opacity: [0, 1], translateY: [16, 0], duration: 600 },
+        700
+      );
+    }
+    if (scrollRef.current) {
+      tl.add(scrollRef.current, { opacity: [0, 1], duration: 900 }, 1200);
+    }
+  }, [ready]);
 
   return (
     <section
@@ -22,40 +74,35 @@ export default function Hero() {
           flash ? "animate-lightning-flash" : ""
         }`}
       >
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-          transition={{ duration: 0.6 }}
+        <p
+          ref={roleRef}
+          style={{ opacity: 0 }}
           className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-muted mb-6"
         >
           {profile.role} — {profile.school}
-        </motion.p>
+        </p>
 
-        <h1 className="text-[13vw] md:text-[6.5vw] leading-[0.95] font-bold tracking-tight">
+        <h1
+          ref={headlineRef}
+          className="text-[13vw] md:text-[6.5vw] leading-[0.95] font-bold tracking-tight"
+        >
           {headline.map((word, i) => (
             <span key={i} className="inline-block overflow-hidden mr-4 align-top">
-              <motion.span
-                initial={{ y: "110%" }}
-                animate={ready ? { y: "0%" } : { y: "110%" }}
-                transition={{
-                  duration: 0.7,
-                  delay: 0.15 + i * 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className={`inline-block ${
+              <span
+                style={{ transform: "translateY(110%)" }}
+                className={`hero-word inline-block ${
                   i === headline.length - 1 ? "gradient-text" : ""
                 }`}
               >
                 {word}
-              </motion.span>
+              </span>
             </span>
           ))}
         </h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
+        <div
+          ref={buttonsRef}
+          style={{ opacity: 0 }}
           className="mt-10 flex flex-wrap items-center gap-4"
         >
           <a
@@ -70,13 +117,12 @@ export default function Hero() {
           >
             Get in touch
           </a>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={ready ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1, delay: 1.2 }}
+      <div
+        ref={scrollRef}
+        style={{ opacity: 0 }}
         className="absolute z-10 bottom-10 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted flex flex-col items-center gap-2"
       >
         <span>Scroll</span>
@@ -85,7 +131,7 @@ export default function Hero() {
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
           className="w-px h-8 bg-muted"
         />
-      </motion.div>
+      </div>
     </section>
   );
 }
