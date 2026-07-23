@@ -6,7 +6,8 @@ import { createTimeline } from "animejs";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
-const DOT_GAP_MS = "+=400";
+const DOT_GAP_MS = "+=200";
+const AFTER_DOTS_GAP_MS = "+=500";
 const LINE_GAP_MS = "+=500";
 
 export default function Hero() {
@@ -22,10 +23,10 @@ export default function Hero() {
   const playedRef = useRef(false);
 
   // Entrance sequence as a single anime.js timeline: role label, then
-  // "Hey" + its three dots (each with a 0.4s gap between them), then
-  // "Nice to meet you" on the same line, a 0.5s pause, "Wanna see what
-  // I'm capable of?", another 0.5s pause, "Check out below :)", then
-  // the buttons and scroll hint.
+  // "Hey" + its three dots (each with a 0.2s gap between them), a 0.5s
+  // pause, then "Nice to meet you" on the same line, another 0.5s pause,
+  // "Wanna see what I'm capable of?", another 0.5s pause, "Check out
+  // below :)", then the buttons and scroll hint.
   useEffect(() => {
     if (!ready || playedRef.current) return;
     playedRef.current = true;
@@ -69,7 +70,11 @@ export default function Hero() {
       );
     });
     if (niceRef.current) {
-      tl.add(niceRef.current, { opacity: [0, 1], translateY: [20, 0], duration: 450 });
+      tl.add(
+        niceRef.current,
+        { opacity: [0, 1], translateY: [20, 0], duration: 450 },
+        AFTER_DOTS_GAP_MS
+      );
     }
     if (line2Ref.current) {
       tl.add(
