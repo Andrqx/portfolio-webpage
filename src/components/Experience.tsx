@@ -3,7 +3,7 @@ import { experience } from "@/data/content";
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-32 px-6 md:px-10">
+    <section id="experience" className="pt-32 pb-16 px-6 md:px-10">
       <div className="mx-auto max-w-6xl">
         <Reveal className="mb-16">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">

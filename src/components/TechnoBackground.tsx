@@ -66,10 +66,9 @@ const REPEL_RADIUS = 150;
 const REPEL_STRENGTH = 2600;
 const SPRING = 0.02;
 const DAMPING = 0.9;
-// Roughly every 5-11s at 60fps — rare enough to feel like a nice surprise,
-// not a constant distraction.
-const COMET_MIN_FRAMES = 300;
-const COMET_MAX_FRAMES = 660;
+// Roughly every 25-35s (30s +/- 5s) at 60fps.
+const COMET_MIN_FRAMES = 1500;
+const COMET_MAX_FRAMES = 2100;
 
 export default function TechnoBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -126,7 +125,7 @@ export default function TechnoBackground() {
         drift: 6 + Math.random() * 10,
         driftPhase: Math.random() * Math.PI * 2,
         rgb,
-        alpha: 0.6 + Math.random() * 0.4,
+        alpha: 0.75 + Math.random() * 0.25,
       };
     };
 
@@ -191,7 +190,7 @@ export default function TechnoBackground() {
           if (dist2 < LINK_DIST * LINK_DIST) {
             const t2 = 1 - Math.sqrt(dist2) / LINK_DIST;
             const [r, g, bch] = a.rgb;
-            ctx.strokeStyle = `rgba(${r}, ${g}, ${bch}, ${t2 * 0.22})`;
+            ctx.strokeStyle = `rgba(${r}, ${g}, ${bch}, ${t2 * 0.32})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -280,17 +279,14 @@ export default function TechnoBackground() {
   }, []);
 
   return (
-    <div aria-hidden className="absolute inset-0 overflow-hidden">
+    <div
+      aria-hidden
+      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
+    >
       <canvas ref={canvasRef} className="h-full w-full" />
-      {/* Vignette + bottom fade so headline text stays legible. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 45%, rgba(8,8,10,0.35) 0%, rgba(8,8,10,0.75) 55%, #08080a 100%)",
-        }}
-      />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+      {/* Light, uniform scrim (rather than Hero's old centered vignette)
+          so body copy stays legible over the dots on every section. */}
+      <div className="absolute inset-0 bg-background/55" />
     </div>
   );
 }
