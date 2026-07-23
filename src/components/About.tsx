@@ -13,13 +13,13 @@ export default function About() {
           </p>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="flex flex-col sm:flex-row gap-8 items-stretch">
-            <div className="relative w-full aspect-[4/3] sm:aspect-auto sm:w-80 md:w-[26rem] shrink-0 overflow-hidden rounded-lg border border-border">
+          <div className="flex flex-col gap-6">
+            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg border border-border">
               <Image
                 src={`${basePath}/images/fsae-team.jpg`}
                 alt="Andrew with the Mac Formula Electric team and car"
                 fill
-                sizes="(min-width: 768px) 26rem, (min-width: 640px) 20rem, 100vw"
+                sizes="(min-width: 768px) 66vw, 100vw"
                 className="object-cover"
               />
             </div>
