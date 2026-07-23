@@ -6,7 +6,7 @@ import { createTimeline } from "animejs";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
-const DOT_GAP_MS = "+=200";
+const DOT_GAP_MS = "+=100";
 const AFTER_DOTS_GAP_MS = "+=500";
 const LINE_GAP_MS = "+=500";
 
@@ -23,7 +23,7 @@ export default function Hero() {
   const playedRef = useRef(false);
 
   // Entrance sequence as a single anime.js timeline: role label, then
-  // "Hey" + its three dots (each with a 0.2s gap between them), a 0.5s
+  // "Hey" + its three dots (each with a 0.1s gap between them), a 0.5s
   // pause, then "Nice to meet you" on the same line, another 0.5s pause,
   // "Wanna see what I'm capable of?", another 0.5s pause, "Check out
   // below :)", then the buttons and scroll hint.
