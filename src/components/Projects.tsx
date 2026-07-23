@@ -13,7 +13,7 @@ export default function Projects() {
   const activeProjects = projects.filter((p) => p.team === activeTeam);
 
   return (
-    <section id="work" className="py-32 px-6 md:px-10">
+    <section id="work" className="pt-16 pb-16 px-6 md:px-10">
       <div className="mx-auto max-w-6xl">
         <Reveal className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">

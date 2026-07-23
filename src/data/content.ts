@@ -219,11 +219,4 @@ export const experience: ExperienceItem[] = [
     description:
       "Built interactive Power BI dashboards visualizing key network performance indicators and automated Excel reporting, cutting manual processing time by 40%.",
   },
-  {
-    role: "B.Eng. Mechanical Engineering",
-    org: "McMaster University",
-    period: "Expected May 2028",
-    description:
-      "Chassis lead for Mac Formula Electric, McMaster's Formula SAE Electric racing team.",
-  },
 ];

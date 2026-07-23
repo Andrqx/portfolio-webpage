@@ -6,7 +6,7 @@ import { profile } from "@/data/content";
 
 export default function Contact() {
   return (
-    <section id="contact" className="pt-16 pb-32 px-6 md:px-10">
+    <section id="contact" className="pt-8 pb-32 px-6 md:px-10">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">

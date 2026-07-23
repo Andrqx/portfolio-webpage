@@ -101,7 +101,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative min-h-[88svh] flex flex-col justify-center overflow-hidden px-6 md:px-10"
+      className="relative min-h-[88svh] flex flex-col justify-start pt-16 md:pt-20 overflow-hidden px-6 md:px-10"
     >
       <div
         className={`relative z-10 mx-auto max-w-6xl w-full ${
