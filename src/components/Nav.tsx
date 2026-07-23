@@ -81,12 +81,17 @@ export default function Nav() {
             </li>
           ))}
         </ul>
-        <Link
-          href={sectionHref("#contact")}
-          className="font-mono text-xs uppercase tracking-widest border border-border rounded-full px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
-        >
-          Let&apos;s talk
-        </Link>
+        <div className="flex items-center gap-4">
+          <span className="hidden md:inline-block font-mono text-xs uppercase tracking-widest text-muted">
+            Grad. {profile.gradDate}
+          </span>
+          <Link
+            href={sectionHref("#contact")}
+            className="font-mono text-xs uppercase tracking-widest border border-border rounded-full px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
+          >
+            Let&apos;s talk
+          </Link>
+        </div>
       </nav>
     </header>
   );

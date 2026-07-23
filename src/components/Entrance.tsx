@@ -74,9 +74,9 @@ type Comet = {
   rgb: RGB;
 };
 
-const COUNT_MS = 2600;
-const HOLD_AT_100_MS = 350;
-const FADE_MS = 900;
+const COUNT_MS = 1900;
+const HOLD_AT_100_MS = 250;
+const FADE_MS = 750;
 const SKIP_FADE_MS = 500;
 const BLOB_COUNT = 4;
 const PIXEL_DOT_COUNT = 340;

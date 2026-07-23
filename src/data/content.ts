@@ -2,9 +2,10 @@ export const profile = {
   name: "Andrew Evans",
   role: "Mechanical Engineer",
   tagline: "I build machines that perform.",
-  bio: "I'm a mechanical engineering student at McMaster University, currently leading the chassis and composites program for Mac Formula Electric. I'm open to co-op opportunities from September 2026 through September 2027.",
+  bio: "Hey! I'm Andrew, I've completed my 3rd year of mechanical engineering and I'm off on my year for co-op. I'm available to work from Sept 2026-2027. I'd love to chat about my experiences, just reach out!",
   location: "Toronto, ON, Canada",
-  school: "McMaster",
+  school: "McMaster University",
+  gradDate: "May 2028",
   email: "evansa25@mcmaster.ca",
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrew-evans-255366248/" },
@@ -173,6 +174,13 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
+    role: "Powertrain Electromechanical Member",
+    org: "Mac Formula Electric",
+    period: "June 2026 — Present",
+    description:
+      "Just joined the powertrain electromechanical subteam and ramping up — moving from three years on chassis and composites into the systems that put power to the wheels.",
+  },
+  {
     role: "Ride Dynamics Manufacturing Intern",
     org: "Multimatic",
     period: "May 2026 — Present",
@@ -182,9 +190,9 @@ export const experience: ExperienceItem[] = [
   {
     role: "Chassis Lead Engineer",
     org: "Mac Formula Electric",
-    period: "June 2025 — Present",
+    period: "June 2025 — June 2026",
     description:
-      "Leading the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% chassis weight reduction while mentoring members in SolidWorks and composite design.",
+      "Led the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% chassis weight reduction while mentoring members in SolidWorks and composite design.",
   },
   {
     role: "Mobility Systems Design Engineer Intern",
@@ -199,13 +207,6 @@ export const experience: ExperienceItem[] = [
     period: "May 2024 — Aug 2024",
     description:
       "Reduced costs by 14% on a $3M infrastructure budget through resource calibration and cost-saving analysis, and conducted quality inspections against engineering drawings and standards.",
-  },
-  {
-    role: "Chassis Engineer",
-    org: "Mac Formula Electric",
-    period: "Feb 2024 — June 2025",
-    description:
-      "Optimized the vehicle's firewall design for manufacturability, achieving a 31% weight reduction using SolidWorks and Ansys FEA simulations to validate the new design.",
   },
   {
     role: "Data Analytics Intern",
