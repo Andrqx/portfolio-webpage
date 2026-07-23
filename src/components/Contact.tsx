@@ -6,7 +6,7 @@ import { profile } from "@/data/content";
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-32 px-6 md:px-10">
+    <section id="contact" className="pt-16 pb-32 px-6 md:px-10">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">
@@ -17,9 +17,9 @@ export default function Contact() {
           <motion.a
             href={`mailto:${profile.email}`}
             whileHover={{ letterSpacing: "0.01em" }}
-            className="block text-[10vw] md:text-[5.5vw] leading-none font-bold tracking-tight gradient-text mb-12"
+            className="block text-[7vw] md:text-[4vw] leading-tight font-bold tracking-tight gradient-text mb-12"
           >
-            Let&apos;s build<br />something great.
+            Always happy to chat, just reach out!
           </motion.a>
         </Reveal>
         <Reveal delay={0.2}>

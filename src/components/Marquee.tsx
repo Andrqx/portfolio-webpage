@@ -4,7 +4,7 @@ export default function Marquee() {
   const items = [...skills, ...skills];
 
   return (
-    <div className="relative border-y border-border py-6 overflow-hidden">
+    <div className="relative mt-20 border-y border-border py-6 overflow-hidden">
       <div className="flex w-max animate-marquee gap-12">
         {items.map((skill, i) => (
           <span

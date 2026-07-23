@@ -1,7 +1,7 @@
 export const profile = {
   name: "Andrew Evans",
   role: "Mechanical Engineer",
-  tagline: "I build machines that perform.",
+  heroLines: ["Hey...", "Wanna see what I'm capable of?", "I'd love to work for you :)"],
   bio: "Hey! I'm Andrew, I've completed my 3rd year of mechanical engineering and I'm off on my year for co-op. I'm available to work from Sept 2026-2027. I'd love to chat about my experiences, just reach out!",
   location: "Toronto, ON, Canada",
   school: "McMaster University",

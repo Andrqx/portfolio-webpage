@@ -74,15 +74,15 @@ type Comet = {
   rgb: RGB;
 };
 
-const COUNT_MS = 1900;
-const HOLD_AT_100_MS = 250;
-const FADE_MS = 750;
+const COUNT_MS = 1400;
+const HOLD_AT_100_MS = 180;
+const FADE_MS = 600;
 const SKIP_FADE_MS = 500;
 const BLOB_COUNT = 4;
 const PIXEL_DOT_COUNT = 340;
-const PIXEL_FADEOUT_STAGGER_MS = 300;
-const PIXEL_FADEOUT_MIN_MS = 400;
-const PIXEL_FADEOUT_MAX_MS = 700;
+const PIXEL_FADEOUT_STAGGER_MS = 180;
+const PIXEL_FADEOUT_MIN_MS = 250;
+const PIXEL_FADEOUT_MAX_MS = 450;
 
 /** Ease-out-cubic: a smooth, steady motion rather than an instant pop. */
 function easeOutCubic(t: number) {
