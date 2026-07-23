@@ -6,35 +6,51 @@ import { createTimeline } from "animejs";
 import { useEntranceReveal } from "@/hooks/useEntranceReveal";
 import { profile } from "@/data/content";
 
+const DOT_GAP_MS = "+=400";
+const LINE_GAP_MS = "+=500";
+
 export default function Hero() {
   const { ready, flash } = useEntranceReveal();
   const roleRef = useRef<HTMLParagraphElement>(null);
-  const linesRef = useRef<HTMLDivElement>(null);
+  const line1Ref = useRef<HTMLParagraphElement>(null);
+  const heyRef = useRef<HTMLSpanElement>(null);
+  const niceRef = useRef<HTMLSpanElement>(null);
+  const line2Ref = useRef<HTMLParagraphElement>(null);
+  const line3Ref = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const playedRef = useRef(false);
 
-  // Entrance sequence, built as a single anime.js timeline: the role
-  // label plays first, then each hero line plays only once the previous
-  // one has fully finished (default sequential timeline behavior — no
-  // explicit position offsets needed), then buttons, then the scroll hint.
+  // Entrance sequence as a single anime.js timeline: role label, then
+  // "Hey" + its three dots (each with a 0.4s gap between them), then
+  // "Nice to meet you" on the same line, a 0.5s pause, "Wanna see what
+  // I'm capable of?", another 0.5s pause, "Check out below :)", then
+  // the buttons and scroll hint.
   useEffect(() => {
     if (!ready || playedRef.current) return;
     playedRef.current = true;
 
-    const lines = linesRef.current?.querySelectorAll<HTMLElement>(".hero-line");
+    const dots = line1Ref.current?.querySelectorAll<HTMLElement>(".hero-dot");
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     if (reduceMotion) {
-      if (roleRef.current) roleRef.current.style.opacity = "1";
-      lines?.forEach((l) => {
-        l.style.opacity = "1";
-        l.style.transform = "translateY(0)";
+      [
+        roleRef.current,
+        heyRef.current,
+        niceRef.current,
+        line2Ref.current,
+        line3Ref.current,
+        buttonsRef.current,
+        scrollRef.current,
+      ].forEach((el) => {
+        if (el) el.style.opacity = "1";
       });
-      if (buttonsRef.current) buttonsRef.current.style.opacity = "1";
-      if (scrollRef.current) scrollRef.current.style.opacity = "1";
+      dots?.forEach((d) => {
+        d.style.opacity = "1";
+        d.style.transform = "scale(1)";
+      });
       return;
     }
 
@@ -42,9 +58,33 @@ export default function Hero() {
     if (roleRef.current) {
       tl.add(roleRef.current, { opacity: [0, 1], translateY: [12, 0], duration: 500 });
     }
-    lines?.forEach((line) => {
-      tl.add(line, { opacity: [0, 1], translateY: [24, 0], duration: 550 });
+    if (heyRef.current) {
+      tl.add(heyRef.current, { opacity: [0, 1], translateY: [20, 0], duration: 450 });
+    }
+    dots?.forEach((dot, i) => {
+      tl.add(
+        dot,
+        { opacity: [0, 1], scale: [0, 1], duration: 150 },
+        i === 0 ? undefined : DOT_GAP_MS
+      );
     });
+    if (niceRef.current) {
+      tl.add(niceRef.current, { opacity: [0, 1], translateY: [20, 0], duration: 450 });
+    }
+    if (line2Ref.current) {
+      tl.add(
+        line2Ref.current,
+        { opacity: [0, 1], translateY: [24, 0], duration: 550 },
+        LINE_GAP_MS
+      );
+    }
+    if (line3Ref.current) {
+      tl.add(
+        line3Ref.current,
+        { opacity: [0, 1], translateY: [24, 0], duration: 550 },
+        LINE_GAP_MS
+      );
+    }
     if (buttonsRef.current) {
       tl.add(buttonsRef.current, { opacity: [0, 1], translateY: [16, 0], duration: 500 });
     }
@@ -71,18 +111,43 @@ export default function Hero() {
           {profile.role} — {profile.school}
         </p>
 
-        <div ref={linesRef} className="flex flex-col gap-1 md:gap-2">
-          {profile.heroLines.map((line, i) => (
-            <p
-              key={line}
-              style={{ opacity: 0, transform: "translateY(24px)" }}
-              className={`hero-line text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] ${
-                i === profile.heroLines.length - 1 ? "gradient-text" : ""
-              }`}
-            >
-              {line}
-            </p>
-          ))}
+        <div className="flex flex-col gap-1 md:gap-2">
+          <p
+            ref={line1Ref}
+            className="text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]"
+          >
+            <span ref={heyRef} style={{ opacity: 0 }} className="inline-block">
+              {profile.heroIntro.greeting}
+            </span>
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                style={{ opacity: 0, transform: "scale(0)" }}
+                className="hero-dot inline-block"
+              >
+                .
+              </span>
+            ))}
+            <span ref={niceRef} style={{ opacity: 0 }} className="inline-block ml-3">
+              {profile.heroIntro.greetingFollowup}
+            </span>
+          </p>
+
+          <p
+            ref={line2Ref}
+            style={{ opacity: 0, transform: "translateY(24px)" }}
+            className="text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]"
+          >
+            {profile.heroIntro.lines[0]}
+          </p>
+
+          <p
+            ref={line3Ref}
+            style={{ opacity: 0, transform: "translateY(24px)" }}
+            className="text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] gradient-text"
+          >
+            {profile.heroIntro.lines[1]}
+          </p>
         </div>
 
         <div
