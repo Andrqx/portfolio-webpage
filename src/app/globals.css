@@ -32,7 +32,10 @@ html {
 }
 
 body {
-  background: var(--background);
+  /* No background here on purpose — the fixed TechnoBackground canvas
+     sits at z-index: -10, and a plain (non-positioned) body background
+     paints ABOVE negative-z-index descendants per CSS stacking order,
+     which was fully hiding it. html's background is the fallback. */
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
