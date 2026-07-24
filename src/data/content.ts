@@ -4,7 +4,7 @@ export const profile = {
   heroIntro: {
     greeting: "Hey",
     greetingFollowup: "Nice to meet you",
-    lines: ["Wanna see what I'm capable of?", "Check out below :)"],
+    lines: ["Wanna learn more about me?", "Just scroll down"],
   },
   bio: "Hey! I'm Andrew, I've completed my 3rd year of mechanical engineering and I'm off on my year for co-op. I'm available to work from Sept 2026-2027. I'd love to chat about my experiences, just reach out!",
   location: "Toronto, ON, Canada",
