@@ -9,6 +9,7 @@ import { profile } from "@/data/content";
 const DOT_GAP_MS = "+=50";
 const AFTER_DOTS_GAP_MS = "+=500";
 const LINE_GAP_MS = "+=500";
+const HERO_PLAYED_KEY = "portfolio-hero-played";
 
 export default function Hero() {
   const { ready, flash } = useEntranceReveal();
@@ -35,8 +36,10 @@ export default function Hero() {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
+    const alreadyPlayed =
+      window.sessionStorage.getItem(HERO_PLAYED_KEY) === "1";
 
-    if (reduceMotion) {
+    if (reduceMotion || alreadyPlayed) {
       [
         roleRef.current,
         heyRef.current,
@@ -55,6 +58,7 @@ export default function Hero() {
       return;
     }
 
+    window.sessionStorage.setItem(HERO_PLAYED_KEY, "1");
     const tl = createTimeline({ defaults: { ease: "outExpo" } });
     if (roleRef.current) {
       tl.add(roleRef.current, { opacity: [0, 1], translateY: [12, 0], duration: 500 });

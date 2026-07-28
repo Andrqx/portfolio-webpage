@@ -74,6 +74,15 @@ export default async function ProjectPage({
               </p>
             ))}
           </div>
+
+          {project.caseStudyHref && (
+            <Link
+              href={project.caseStudyHref}
+              className="mt-10 inline-block font-mono text-xs uppercase tracking-widest text-muted hover:text-foreground transition-colors"
+            >
+              Read the full FE validation case study →
+            </Link>
+          )}
         </div>
       </main>
       <Footer />

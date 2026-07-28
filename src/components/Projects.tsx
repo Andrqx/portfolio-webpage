@@ -71,7 +71,7 @@ export default function Projects() {
             {activeProjects.map((project) => (
               <MotionLink
                 key={project.slug}
-                href={`/work/${project.slug}`}
+                href={project.caseStudyHref ?? `/work/${project.slug}`}
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="group block bg-background p-8 md:p-10 h-full hover:bg-foreground/[0.03] transition-colors"

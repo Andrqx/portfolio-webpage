@@ -6,7 +6,7 @@ export const profile = {
     greetingFollowup: "Nice to meet you",
     lines: ["Wanna learn more about me?", "Just scroll down"],
   },
-  bio: "Hey! I'm Andrew, I've completed my 3rd year of mechanical engineering and I'm off on my year for co-op. I'm available to work from Sept 2026-2027. I'd love to chat about my experiences, just reach out!",
+  bio: "Hey! I'm Andrew, a 3rd-year mechanical engineering student currently on my co-op year, available to work Sept 2026-2027. I'd love to chat about my experience, so reach out!",
   location: "Toronto, ON, Canada",
   school: "McMaster University",
   gradDate: "May 2028",
@@ -46,6 +46,7 @@ export type Project = {
   description: string;
   detail: string[];
   tags: string[];
+  caseStudyHref?: string;
 };
 
 export const projects: Project[] = [
@@ -55,13 +56,14 @@ export const projects: Project[] = [
     team: "FSAE",
     period: "June 2025 — Present",
     description:
-      "Leading the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% weight reduction while validating structural performance.",
+      "Leading carbon fiber monocoque and chassis design for a 20-engineer team, cutting weight 20% while validating structural performance.",
     detail: [
-      "As Chassis Lead Engineer for Mac Formula Electric, I own the carbon fiber monocoque and chassis subsystems for a 20-engineer team — from composite layup strategy through structural validation.",
-      "This cycle's redesign cut chassis weight by 20% while preserving the majority of structural integrity, and I mentored team members in SolidWorks and composite design along the way.",
-      "Working with the capstone team, we validated the chassis FE model against physical torsional stiffness testing, achieving within 8% simulation-to-test error using measured composite material data.",
+      "As Chassis Lead Engineer for Mac Formula Electric, I run chassis and monocoque design for a 20-engineer team, from layup strategy through structural validation.",
+      "This redesign cut chassis weight 20% while keeping most of the structural integrity, and I mentored teammates in SolidWorks and composite design along the way.",
+      "With the capstone team, I validated the chassis FE model against physical torsional stiffness testing, landing within 13.3% of the measured result using our own material data.",
     ],
     tags: ["SolidWorks", "Ansys ACP", "Ansys FEA"],
+    caseStudyHref: "/work/chassis-torsional-fe-validation",
   },
   {
     slug: "firewall-dfm-redesign",
@@ -69,10 +71,10 @@ export const projects: Project[] = [
     team: "FSAE",
     period: "Feb 2024 — June 2025",
     description:
-      "Optimized the vehicle's firewall design for manufacturability, cutting weight by 31% using SolidWorks and Ansys FEA.",
+      "Redesigned the vehicle's firewall for manufacturability, cutting weight 31% using SolidWorks and Ansys FEA.",
     detail: [
-      "As Chassis Engineer, I optimized the vehicle's firewall design for manufacturability (DFM), identifying opportunities to simplify geometry and reduce material without compromising protection.",
-      "Using SolidWorks for modeling and Ansys FEA to validate the new design against structural requirements, the redesign achieved a 31% weight reduction.",
+      "As Chassis Engineer, I redesigned the firewall for manufacturability (DFM), simplifying the geometry and cutting material without giving up protection.",
+      "I modeled it in SolidWorks and validated the new design in Ansys FEA, landing a 31% weight reduction.",
     ],
     tags: ["SolidWorks", "Ansys FEA", "DFM"],
   },
@@ -82,10 +84,10 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 — Present",
     description:
-      "Ran cycle time studies and designed custom tooling for a new second-generation damper line for GM light duty trucks.",
+      "Ran cycle time studies and designed custom tooling for a new second-gen damper line for GM light duty trucks.",
     detail: [
-      "Ahead of a new second-generation damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling to support the assembly process.",
-      "I also reported control faults found in BOS Systems' assembly machines, helping the line launch with fewer surprises.",
+      "Ahead of a new second-gen damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling for the assembly process.",
+      "I also flagged control faults in BOS Systems' assembly machines, so the line launched with fewer surprises.",
     ],
     tags: ["Manufacturing", "Tooling Design", "Cycle Time Studies"],
   },
@@ -95,10 +97,10 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 — Present",
     description:
-      "Performed root cause failure analysis on 5 dampers that failed dyno validation during pre-production testing.",
+      "Ran root cause analysis on 5 dampers that failed dyno validation during pre-production testing.",
     detail: [
-      "Five dampers failed dyno validation during pre-production testing. I measured critical dimensions and tolerances across each unit to isolate the components driving failure.",
-      "That analysis informed the corrective action taken before the line moved forward, reducing the risk of the same failure recurring at volume.",
+      "Five dampers failed dyno validation during pre-production testing. I measured critical dimensions and tolerances on each unit to find what was driving the failure.",
+      "That analysis shaped the fix before the line moved forward, lowering the risk of it happening again at volume.",
     ],
     tags: ["Root Cause Analysis", "GD&T", "Manufacturing"],
   },
@@ -108,10 +110,10 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 — Present",
     description:
-      "Designed, material-selected, and fabricated a part buffer cart that protects cycle times during robot downtime.",
+      "Designed, selected materials for, and built a part buffer cart that protects cycle times during robot downtime.",
     detail: [
-      "To protect the damper line from robot downtime, I designed, material-selected, and fabricated a part buffer cart that decouples the upstream robotic station from downstream manual assembly.",
-      "The cart stores surplus parts so the line can keep flowing even when the upstream robot goes down, sustaining cycle times instead of stalling the whole line.",
+      "To protect the damper line from robot downtime, I designed and built a part buffer cart that decouples the upstream robot station from downstream manual assembly.",
+      "The cart stores surplus parts so the line keeps flowing even when the upstream robot goes down, instead of stalling out.",
     ],
     tags: ["Manufacturing", "Tooling Design", "DFM"],
   },
@@ -121,10 +123,10 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 — Aug 2025",
     description:
-      "Resolved high-priority assembly issues by engineering design solutions in Siemens NX.",
+      "Resolved high-priority assembly issues with design solutions engineered in Siemens NX.",
     detail: [
-      "I resolved high-priority assembly issues by engineering design solutions in Siemens NX, collaborating across Hull Additions, Propulsion, and manufacturing teams.",
-      "The goal on every fix was the same: an integrated, production-ready solution — not a patch that just moved the problem downstream.",
+      "I resolved high-priority assembly issues in Siemens NX, working across Hull Additions, Propulsion, and manufacturing teams.",
+      "The goal on every fix was the same: an integrated, production-ready solution, not just a patch that pushed the problem downstream.",
     ],
     tags: ["Siemens NX", "GD&T"],
   },
@@ -134,10 +136,10 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 — Aug 2025",
     description:
-      "Aided bilge adapter design in Siemens NX for water evacuation testing, applying GD&T and verifying prototype testing.",
+      "Supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T and verifying it through prototype testing.",
     detail: [
-      "I supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T to keep the design within tolerance across manufacturing and assembly.",
-      "I also verified the design through prototype testing, confirming it performed as intended before sign-off.",
+      "I supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T to keep it within tolerance through manufacturing and assembly.",
+      "I also verified it through prototype testing to confirm it performed as intended before sign-off.",
     ],
     tags: ["Siemens NX", "GD&T"],
   },
@@ -147,10 +149,10 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 — Aug 2025",
     description:
-      "Built an automated weight verification tool that integrated real part data into Excel for precise mass roll-ups.",
+      "Built an automated tool that pulls real part data into Excel for precise weight verification and mass roll-ups.",
     detail: [
-      "I built an automated weight verification tool that pulled real part data directly into Excel, enabling precise mobility assembly mass roll-ups.",
-      "This improved the accuracy of vehicle weight compliance reporting and cut down the manual effort needed to keep it up to date.",
+      "I built an automated tool that pulls real part data into Excel for precise mobility assembly mass roll-ups.",
+      "This improved the accuracy of vehicle weight compliance reporting and cut the manual effort needed to keep it current.",
     ],
     tags: ["Excel / VBA", "GD&T"],
   },
@@ -160,10 +162,10 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 — Aug 2025",
     description:
-      "Authored a Statement of Work specifying ASME and ISO durability tests to validate new gear oils.",
+      "Authored a Statement of Work specifying ASME/ISO durability tests for new gear oils.",
     detail: [
-      "I authored a Statement of Work specifying ASME and ISO durability tests to validate new gear oils being considered for mobility systems.",
-      "The test plan directly addressed known failure risks — seal wear and carbon buildup — to make sure any new oil met performance requirements before it reached the field.",
+      "I authored a Statement of Work specifying ASME/ISO durability tests to validate new gear oils for mobility systems.",
+      "The test plan addressed known failure risks, like seal wear and carbon buildup, so any new oil had to meet performance requirements before reaching the field.",
     ],
     tags: ["ASME", "ISO", "Root Cause Analysis"],
   },
@@ -182,41 +184,41 @@ export const experience: ExperienceItem[] = [
     org: "Mac Formula Electric",
     period: "June 2026 — Present",
     description:
-      "Just joined the powertrain electromechanical subteam and ramping up — moving from three years on chassis and composites into the systems that put power to the wheels.",
+      "Just joined the powertrain electromechanical subteam, moving from three years on chassis and composites into the systems that put power down.",
   },
   {
     role: "Ride Dynamics Manufacturing Intern",
     org: "Multimatic",
     period: "May 2026 — Present",
     description:
-      "Ran cycle time studies and designed custom tooling for a new damper line, performed root cause failure analysis on dyno-failed dampers, and built a part buffer cart to protect line cycle times during robot downtime.",
+      "Ran cycle time studies and custom tooling for a new damper line, root-caused dyno-failed dampers, and built a part buffer cart to protect cycle times during robot downtime.",
   },
   {
     role: "Chassis Lead Engineer",
     org: "Mac Formula Electric",
     period: "June 2025 — June 2026",
     description:
-      "Led the carbon fiber monocoque and chassis subsystems for a 20-engineer team, driving a 20% chassis weight reduction while mentoring members in SolidWorks and composite design.",
+      "Led the carbon fiber monocoque and chassis subsystems for a 20-engineer team, cutting chassis weight 20% while mentoring teammates in SolidWorks and composite design.",
   },
   {
     role: "Mobility Systems Design Engineer Intern",
     org: "General Dynamics",
     period: "May 2025 — Aug 2025",
     description:
-      "Resolved high-priority assembly issues in Siemens NX, built an automated weight verification tool for vehicle mass roll-ups, and authored a Statement of Work specifying durability tests for new gear oils.",
+      "Resolved high-priority assembly issues in Siemens NX, built an automated weight verification tool for mass roll-ups, and wrote a Statement of Work for new gear oil durability tests.",
   },
   {
     role: "Project Engineering Intern",
     org: "Town of Ajax",
     period: "May 2024 — Aug 2024",
     description:
-      "Reduced costs by 14% on a $3M infrastructure budget through resource calibration and cost-saving analysis, and conducted quality inspections against engineering drawings and standards.",
+      "Cut costs 14% on a $3M infrastructure budget through resource calibration and cost analysis, and ran quality inspections against engineering drawings and standards.",
   },
   {
     role: "Data Analytics Intern",
     org: "Nokia",
     period: "July 2022 — Aug 2022",
     description:
-      "Built interactive Power BI dashboards visualizing key network performance indicators and automated Excel reporting, cutting manual processing time by 40%.",
+      "Built interactive Power BI dashboards for key network performance indicators and automated Excel reporting, cutting manual processing time 40%.",
   },
 ];
