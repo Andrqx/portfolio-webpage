@@ -123,9 +123,19 @@ export default function ChassisFEValidationPage() {
                 caption="The MTS Criterion rig set up for 3 point bend qualification testing."
               />
               <Figure
+                src="/images/three-point-bend-force-displacement.png"
+                label="3 point bend force displacement data"
+                caption="Force displacement curve from the 3 point bend test, with the linear elastic fit and maximum load marked."
+              />
+              <Figure
                 src="/images/puncture-shear-test.jpg"
                 label="Puncture/shear test rig"
                 caption="Perimeter shear test setup, the second qualification test used alongside 3 point bend."
+              />
+              <Figure
+                src="/images/puncture-shear-force-displacement.png"
+                label="Puncture/shear force displacement data"
+                caption="Force displacement curve from the puncture/shear test, with the first peak marked."
               />
               <p className="text-lg text-muted leading-relaxed">
                 Two rules shaped how much design freedom that left. Layer
@@ -168,6 +178,11 @@ export default function ChassisFEValidationPage() {
                 label="C9 layup under vacuum"
                 caption="The C9 layup mid layup, bagged and under vacuum on the chassis mold."
               />
+              <Figure
+                src="/images/layup-schedule.png"
+                label="Monocoque layup schedule"
+                caption="The layup schedule for C9 alongside its doubled and half thickness variants, and the other panel types used across the chassis."
+              />
               <p className="text-lg text-muted leading-relaxed">
                 C9 clears the SES while weighted more toward 0°, where the
                 bend test actually loads it. Higher load zones like side
@@ -175,6 +190,11 @@ export default function ChassisFEValidationPage() {
                 eight layers under the no retest rule, instead of a
                 separately qualified layup.
               </p>
+              <Figure
+                src="/images/c9-quasi-isotropic-distribution.png"
+                label="C9 quasi isotropic modulus and UTS distribution"
+                caption="Estimated skin modulus and UTS by direction, showing how close to isotropic the C9 layup actually is."
+              />
               <Figure
                 src="/images/chassis-monocoque-interior.jpg"
                 label="Cured monocoque interior"
@@ -199,16 +219,22 @@ export default function ChassisFEValidationPage() {
                 core, 0.5&quot; foam core, and so on.
               </p>
               <Figure
-                label="FE model, layup zoning and boundary conditions"
+                src="/images/acp-setup.png"
+                label="Ansys ACP element wise thickness"
                 caption={
                   <>
-                    Ansys ACP zone map by layup and the torsional load case
-                    boundary conditions.{" "}
+                    Element wise laminate thickness in Ansys ACP, showing how
+                    the zoning varies across the chassis.{" "}
                     <Confirm>
                       full zone map of single vs. double C9 regions
                     </Confirm>
                   </>
                 }
+              />
+              <Figure
+                src="/images/boundary-conditions.png"
+                label="Torsional load case boundary conditions"
+                caption="Remote forces of 2000 N applied at the front pickups, opposite directions, with the rear suspension mounts fixed."
               />
               <p className="text-lg text-muted leading-relaxed">
                 Zone boundaries are merged into continuous shell edges. No
@@ -245,11 +271,10 @@ export default function ChassisFEValidationPage() {
                 aspect="aspect-square"
               />
               <p className="text-lg text-muted leading-relaxed">
-                The load case applies a remote force at the front suspension
-                pickups, up on one side and down on the other, forming a
-                torsional couple (
-                <Confirm>applied load magnitude</Confirm>). The rear
-                suspension mounts stay fully fixed, everything else is free.
+                The load case applies a 2000 N remote force at the front
+                suspension pickups, up on one side and down on the other,
+                forming a torsional couple. The rear suspension mounts stay
+                fully fixed, everything else is free.
                 It mirrors the physical torsion rig exactly, built and
                 tested a year earlier by the capstone team, who also ran the
                 coupon testing. The mesh is capped at 32,000 elements, the
@@ -277,6 +302,7 @@ export default function ChassisFEValidationPage() {
                 out compliance sources the real structure has.
               </p>
               <Figure
+                src="/images/physical-torsional-stiffness-rig.jpg"
                 label="Physical torsion rig"
                 caption="The physical torsion rig used to measure chassis stiffness, built and tested by the capstone team."
               />
@@ -336,13 +362,12 @@ export default function ChassisFEValidationPage() {
               Still needed to finish this page
             </p>
             <ul className="space-y-2 text-muted list-disc list-inside">
-              <li>
-                Force displacement data plots (line charts) from the 3 point
-                bend and puncture/shear tests
-              </li>
-              <li>FE model screenshot: layup zoning and boundary conditions</li>
-              <li>Photo of the physical torsion rig</li>
               <li>Predicted vs actual stiffness comparison chart</li>
+              <li>
+                A zone map that names which specific regions run single vs
+                double C9 (the current ACP screenshot shows thickness, not
+                the named zone boundaries)
+              </li>
             </ul>
           </section>
         </div>
