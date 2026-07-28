@@ -117,7 +117,7 @@ export default function Hero() {
           style={{ opacity: 0 }}
           className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-muted mb-6"
         >
-          {profile.role} — {profile.school}
+          {profile.role} · {profile.school}
         </p>
 
         <div className="flex flex-col gap-1 md:gap-2">

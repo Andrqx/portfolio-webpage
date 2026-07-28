@@ -54,7 +54,7 @@ export const projects: Project[] = [
     slug: "carbon-fiber-monocoque-chassis",
     title: "Carbon Fiber Monocoque & Chassis",
     team: "FSAE",
-    period: "June 2025 — Present",
+    period: "June 2025 - Present",
     description:
       "Leading carbon fiber monocoque and chassis design for a 20-engineer team, cutting weight 20% while validating structural performance.",
     detail: [
@@ -69,7 +69,7 @@ export const projects: Project[] = [
     slug: "firewall-dfm-redesign",
     title: "Firewall Redesign for Manufacturability",
     team: "FSAE",
-    period: "Feb 2024 — June 2025",
+    period: "Feb 2024 - June 2025",
     description:
       "Redesigned the vehicle's firewall for manufacturability, cutting weight 31% using SolidWorks and Ansys FEA.",
     detail: [
@@ -82,7 +82,7 @@ export const projects: Project[] = [
     slug: "damper-line-cycle-time-tooling",
     title: "Damper Line Cycle Time & Custom Tooling",
     team: "Multimatic",
-    period: "May 2026 — Present",
+    period: "May 2026 - Present",
     description:
       "Ran cycle time studies and designed custom tooling for a new second-gen damper line for GM light duty trucks.",
     detail: [
@@ -95,7 +95,7 @@ export const projects: Project[] = [
     slug: "dyno-failure-root-cause-analysis",
     title: "Dyno Failure Root Cause Analysis",
     team: "Multimatic",
-    period: "May 2026 — Present",
+    period: "May 2026 - Present",
     description:
       "Ran root cause analysis on 5 dampers that failed dyno validation during pre-production testing.",
     detail: [
@@ -108,7 +108,7 @@ export const projects: Project[] = [
     slug: "damper-line-part-buffer-cart",
     title: "Damper Line Part Buffer Cart",
     team: "Multimatic",
-    period: "May 2026 — Present",
+    period: "May 2026 - Present",
     description:
       "Designed, selected materials for, and built a part buffer cart that protects cycle times during robot downtime.",
     detail: [
@@ -121,7 +121,7 @@ export const projects: Project[] = [
     slug: "hull-assembly-design-solutions",
     title: "Hull Assembly Design Solutions",
     team: "General Dynamics",
-    period: "May 2025 — Aug 2025",
+    period: "May 2025 - Aug 2025",
     description:
       "Resolved high-priority assembly issues with design solutions engineered in Siemens NX.",
     detail: [
@@ -134,7 +134,7 @@ export const projects: Project[] = [
     slug: "bilge-adapter-design",
     title: "Bilge Adapter Design for Water Evacuation Testing",
     team: "General Dynamics",
-    period: "May 2025 — Aug 2025",
+    period: "May 2025 - Aug 2025",
     description:
       "Supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T and verifying it through prototype testing.",
     detail: [
@@ -147,7 +147,7 @@ export const projects: Project[] = [
     slug: "automated-weight-verification-tool",
     title: "Automated Weight Verification Tool",
     team: "General Dynamics",
-    period: "May 2025 — Aug 2025",
+    period: "May 2025 - Aug 2025",
     description:
       "Built an automated tool that pulls real part data into Excel for precise weight verification and mass roll-ups.",
     detail: [
@@ -160,7 +160,7 @@ export const projects: Project[] = [
     slug: "gear-oil-durability-test-sow",
     title: "Gear Oil Durability Test Specification",
     team: "General Dynamics",
-    period: "May 2025 — Aug 2025",
+    period: "May 2025 - Aug 2025",
     description:
       "Authored a Statement of Work specifying ASME/ISO durability tests for new gear oils.",
     detail: [
@@ -182,42 +182,42 @@ export const experience: ExperienceItem[] = [
   {
     role: "Powertrain Electromechanical Member",
     org: "Mac Formula Electric",
-    period: "June 2026 — Present",
+    period: "June 2026 - Present",
     description:
       "Just joined the powertrain electromechanical subteam, moving from three years on chassis and composites into the systems that put power down.",
   },
   {
     role: "Ride Dynamics Manufacturing Intern",
     org: "Multimatic",
-    period: "May 2026 — Present",
+    period: "May 2026 - Present",
     description:
       "Ran cycle time studies and custom tooling for a new damper line, root-caused dyno-failed dampers, and built a part buffer cart to protect cycle times during robot downtime.",
   },
   {
     role: "Chassis Lead Engineer",
     org: "Mac Formula Electric",
-    period: "June 2025 — June 2026",
+    period: "June 2025 - June 2026",
     description:
       "Led the carbon fiber monocoque and chassis subsystems for a 20-engineer team, cutting chassis weight 20% while mentoring teammates in SolidWorks and composite design.",
   },
   {
     role: "Mobility Systems Design Engineer Intern",
     org: "General Dynamics",
-    period: "May 2025 — Aug 2025",
+    period: "May 2025 - Aug 2025",
     description:
       "Resolved high-priority assembly issues in Siemens NX, built an automated weight verification tool for mass roll-ups, and wrote a Statement of Work for new gear oil durability tests.",
   },
   {
     role: "Project Engineering Intern",
     org: "Town of Ajax",
-    period: "May 2024 — Aug 2024",
+    period: "May 2024 - Aug 2024",
     description:
       "Cut costs 14% on a $3M infrastructure budget through resource calibration and cost analysis, and ran quality inspections against engineering drawings and standards.",
   },
   {
     role: "Data Analytics Intern",
     org: "Nokia",
-    period: "July 2022 — Aug 2022",
+    period: "July 2022 - Aug 2022",
     description:
       "Built interactive Power BI dashboards for key network performance indicators and automated Excel reporting, cutting manual processing time 40%.",
   },

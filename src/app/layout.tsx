@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Andrew Evans — Mechanical Engineer",
+  title: "Andrew Evans | Mechanical Engineer",
   description: "Portfolio of Andrew Evans, mechanical engineering student and chassis lead at Mac Formula Electric.",
 };
 

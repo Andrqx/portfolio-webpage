@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!project) return {};
 
   return {
-    title: `${project.title} — ${profile.name}`,
+    title: `${project.title} | ${profile.name}`,
     description: project.description,
   };
 }
@@ -50,7 +50,7 @@ export default async function ProjectPage({
           </Link>
 
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mt-8 mb-4">
-            {team?.label} — {project.period}
+            {team?.label} · {project.period}
           </p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-10">
             {project.title}
