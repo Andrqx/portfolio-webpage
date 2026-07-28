@@ -23,7 +23,7 @@ export default function Experience() {
                 </span>
                 <div>
                   <h3 className="text-xl font-bold tracking-tight">{item.role}</h3>
-                  <p className="text-muted text-sm">{item.org}</p>
+                  <p className="text-accent text-sm">{item.org}</p>
                 </div>
                 <p className="text-muted leading-relaxed">{item.description}</p>
               </div>
