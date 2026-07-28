@@ -18,19 +18,21 @@ function Figure({
   caption,
   aspect = "aspect-video",
   src,
+  fit = "cover",
 }: {
   label: string;
   caption: ReactNode;
   aspect?: string;
   src?: string;
+  fit?: "cover" | "contain";
 }) {
   return (
-    <figure className="my-8">
+    <figure className="min-w-0">
       <div
-        className={`relative w-full ${aspect} overflow-hidden rounded-lg ${
+        className={`relative w-full ${aspect} overflow-hidden rounded-lg bg-foreground/[0.03] ${
           src
             ? "border border-border"
-            : "border border-dashed border-border bg-foreground/[0.03] flex items-center justify-center px-6 text-center"
+            : "border border-dashed border-border flex items-center justify-center px-6 text-center"
         }`}
       >
         {src ? (
@@ -38,8 +40,8 @@ function Figure({
             src={`${basePath}${src}`}
             alt={label}
             fill
-            sizes="(min-width: 768px) 48rem, 100vw"
-            className="object-cover"
+            sizes="(min-width: 768px) 24rem, 100vw"
+            className={fit === "contain" ? "object-contain" : "object-cover"}
           />
         ) : (
           <span className="font-mono text-xs uppercase tracking-widest text-muted">
@@ -54,9 +56,17 @@ function Figure({
   );
 }
 
-function Confirm({ children }: { children: ReactNode }) {
+function FigureRow({
+  cols = 2,
+  children,
+}: {
+  cols?: 1 | 2;
+  children: ReactNode;
+}) {
   return (
-    <span className="font-mono text-sm text-accent">[CONFIRM: {children}]</span>
+    <div className={`my-8 grid gap-6 ${cols === 2 ? "sm:grid-cols-2" : ""}`}>
+      {children}
+    </div>
   );
 }
 
@@ -117,26 +127,30 @@ export default function ChassisFEValidationPage() {
                 force displacement data to the SES tool. It checks each zone
                 against its steel tube equivalent requirement.
               </p>
-              <Figure
-                src="/images/three-point-bend-test.jpg"
-                label="3 point bend test rig"
-                caption="The MTS Criterion rig set up for 3 point bend qualification testing."
-              />
-              <Figure
-                src="/images/three-point-bend-force-displacement.png"
-                label="3 point bend force displacement data"
-                caption="Force displacement curve from the 3 point bend test, with the linear elastic fit and maximum load marked."
-              />
-              <Figure
-                src="/images/puncture-shear-test.jpg"
-                label="Puncture/shear test rig"
-                caption="Perimeter shear test setup, the second qualification test used alongside 3 point bend."
-              />
-              <Figure
-                src="/images/puncture-shear-force-displacement.png"
-                label="Puncture/shear force displacement data"
-                caption="Force displacement curve from the puncture/shear test, with the first peak marked."
-              />
+              <FigureRow>
+                <Figure
+                  src="/images/three-point-bend-test.jpg"
+                  label="3 point bend test rig"
+                  caption="The MTS Criterion rig set up for 3 point bend qualification testing."
+                />
+                <Figure
+                  src="/images/three-point-bend-force-displacement.png"
+                  label="3 point bend force displacement data"
+                  fit="contain"
+                  caption="Force displacement curve from the 3 point bend test, with the linear fit and max load marked."
+                />
+                <Figure
+                  src="/images/puncture-shear-test.jpg"
+                  label="Puncture/shear test rig"
+                  caption="Perimeter shear setup, the second qualification test that runs alongside it."
+                />
+                <Figure
+                  src="/images/puncture-shear-force-displacement.png"
+                  label="Puncture/shear force displacement data"
+                  fit="contain"
+                  caption="Force displacement curve from the puncture/shear test, with the first peak marked."
+                />
+              </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
                 Two rules shaped how much design freedom that left. Layer
                 count can be doubled to claim double the tested properties,
@@ -173,16 +187,18 @@ export default function ChassisFEValidationPage() {
                 following summer. All three were rejected: none matched or
                 beat C5.
               </p>
-              <Figure
-                src="/images/chassis-layup-vacuum-bagging.jpg"
-                label="C9 layup under vacuum"
-                caption="The C9 layup mid layup, bagged and under vacuum on the chassis mold."
-              />
-              <Figure
-                src="/images/layup-schedule.png"
-                label="Monocoque layup schedule"
-                caption="The layup schedule for C9 alongside its doubled and half thickness variants, and the other panel types used across the chassis."
-              />
+              <FigureRow>
+                <Figure
+                  src="/images/chassis-dry-layup-mold.jpg"
+                  label="Dry layup in the chassis mold"
+                  caption="Dry carbon and H80 PVC foam core laid into the mold, before infusion."
+                />
+                <Figure
+                  src="/images/chassis-monocoque-interior.jpg"
+                  label="Cured monocoque interior"
+                  caption="Interior of the cured monocoque, showing the C9 skin after infusion."
+                />
+              </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
                 C9 clears the SES while weighted more toward 0°, where the
                 bend test actually loads it. Higher load zones like side
@@ -190,16 +206,28 @@ export default function ChassisFEValidationPage() {
                 eight layers under the no retest rule, instead of a
                 separately qualified layup.
               </p>
-              <Figure
-                src="/images/c9-quasi-isotropic-distribution.png"
-                label="C9 quasi isotropic modulus and UTS distribution"
-                caption="Estimated skin modulus and UTS by direction, showing how close to isotropic the C9 layup actually is."
-              />
-              <Figure
-                src="/images/chassis-monocoque-interior.jpg"
-                label="Cured monocoque interior"
-                caption="Interior of the cured carbon fiber monocoque, showing the C9 skin layup after infusion."
-              />
+              <FigureRow cols={1}>
+                <Figure
+                  src="/images/layup-schedule.png"
+                  label="Monocoque layup schedule"
+                  fit="contain"
+                  caption="Every layup used across the monocoque. C9 is the baseline, C9 x2 is the same stack doubled, and the coloured headers key into the zone map below."
+                />
+              </FigureRow>
+              <FigureRow>
+                <Figure
+                  src="/images/layup-zone-map.png"
+                  label="Chassis layup zone map"
+                  fit="contain"
+                  caption="Chassis coloured by layup zone, matching the schedule headers. Most of the tub runs C9 x2, with C9N, C9 x3, and H2 x2 zones called out separately."
+                />
+                <Figure
+                  src="/images/c9-quasi-isotropic-distribution.png"
+                  label="C9 quasi isotropic modulus and UTS distribution"
+                  fit="contain"
+                  caption="Estimated skin modulus and UTS by direction, showing how close to isotropic C9 actually is."
+                />
+              </FigureRow>
             </div>
           </section>
 
@@ -218,30 +246,29 @@ export default function ChassisFEValidationPage() {
                 layup: skin only regions, single C9, double C9, 1&quot; foam
                 core, 0.5&quot; foam core, and so on.
               </p>
-              <Figure
-                src="/images/acp-setup.png"
-                label="Ansys ACP element wise thickness"
-                caption={
-                  <>
-                    Element wise laminate thickness in Ansys ACP, showing how
-                    the zoning varies across the chassis.{" "}
-                    <Confirm>
-                      full zone map of single vs. double C9 regions
-                    </Confirm>
-                  </>
-                }
-              />
-              <Figure
-                src="/images/boundary-conditions.png"
-                label="Torsional load case boundary conditions"
-                caption="Remote forces of 2000 N applied at the front pickups, opposite directions, with the rear suspension mounts fixed."
-              />
+              <FigureRow>
+                <Figure
+                  src="/images/acp-setup.png"
+                  label="Ansys ACP element wise thickness"
+                  fit="contain"
+                  caption="Element wise laminate thickness in Ansys ACP, showing how the zoning varies across the chassis."
+                />
+                <Figure
+                  src="/images/boundary-conditions.png"
+                  label="Torsional load case boundary conditions"
+                  fit="contain"
+                  caption="Remote forces of 2000 N at the front pickups in opposite directions, rear suspension mounts fixed."
+                />
+              </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
-                Zone boundaries are merged into continuous shell edges. No
-                overlap geometry or discrete bonded joints are modeled there.
-                That&apos;s a simplification of the model, not a design
-                decision: the physical chassis has overlapping dry carbon at
-                every joint, and none of that is represented here.
+                The geometry itself is a simplified version of the chassis.
+                Hardpoints, inserts, and mounting hardware are left out
+                entirely, and zone boundaries are merged into continuous
+                shell edges with no overlap geometry or discrete bonded
+                joints. That&apos;s a simplification of the model, not a
+                design decision. The real chassis has overlapping dry carbon
+                at every joint and hardpoints at every suspension and
+                harness mount, and none of that is in here.
               </p>
               <p className="text-lg text-muted leading-relaxed">
                 Material properties come from the team&apos;s own coupon
@@ -259,17 +286,21 @@ export default function ChassisFEValidationPage() {
                 cross sections shows voids even under those ideal
                 conditions, the visual version of that gap.
               </p>
-              <Figure
-                src="/images/coupon-glass-tooling-infusion.jpg"
-                label="Coupon vacuum infusion on glass tooling"
-                caption="Coupons vacuum infused on smooth glass tooling, the near ideal conditions referenced above."
-              />
-              <Figure
-                src="/images/coupon-microscope-voids.png"
-                label="Microscope image, voids in coupon cross section"
-                caption="Cross section of a test coupon at 20 µm scale, showing voids even under near ideal, small scale vacuum infusion."
-                aspect="aspect-square"
-              />
+              <FigureRow>
+                <Figure
+                  src="/images/coupon-glass-tooling-infusion.jpg"
+                  label="Coupon vacuum infusion on glass tooling"
+                  aspect="aspect-[4/3]"
+                  caption="Coupons vacuum infused on smooth glass tooling, the near ideal conditions referenced above."
+                />
+                <Figure
+                  src="/images/coupon-microscope-voids.png"
+                  label="Microscope image, voids in coupon cross section"
+                  aspect="aspect-[4/3]"
+                  fit="contain"
+                  caption="Coupon cross section at 20 µm scale, showing voids even under near ideal, small scale infusion."
+                />
+              </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
                 The load case applies a 2000 N remote force at the front
                 suspension pickups, up on one side and down on the other,
@@ -301,21 +332,31 @@ export default function ChassisFEValidationPage() {
                 torsion models usually miss in: shell models tend to leave
                 out compliance sources the real structure has.
               </p>
-              <Figure
-                src="/images/physical-torsional-stiffness-rig.jpg"
-                label="Physical torsion rig"
-                caption="The physical torsion rig used to measure chassis stiffness, built and tested by the capstone team."
-              />
-              <Figure
-                src="/images/fe-deflection-animation.gif"
-                label="FE Y axis deflection under torsional load"
-                caption="Simulated directional deformation under the torsional couple at the front suspension pickups."
-              />
-              <Figure
-                src="/images/fe-stress-animation.gif"
-                label="FE equivalent stress under torsional load"
-                caption="Simulated equivalent (von Mises) stress under the same torsional load case."
-              />
+              <FigureRow>
+                <Figure
+                  src="/images/physical-torsional-stiffness-rig.jpg"
+                  label="Physical torsion rig"
+                  caption="The physical torsion rig used to measure chassis stiffness, built and tested by the capstone team."
+                />
+                <Figure
+                  label="Predicted vs. actual torsional stiffness"
+                  caption="Simulated (4500 N·m/deg) vs. measured (3900 N·m/deg) torsional stiffness."
+                />
+              </FigureRow>
+              <FigureRow>
+                <Figure
+                  src="/images/fe-deflection-animation.gif"
+                  label="FE Y axis deflection under torsional load"
+                  fit="contain"
+                  caption="Simulated directional deformation under the torsional couple at the front pickups."
+                />
+                <Figure
+                  src="/images/fe-stress-animation.gif"
+                  label="FE equivalent stress under torsional load"
+                  fit="contain"
+                  caption="Simulated equivalent (von Mises) stress under the same torsional load case."
+                />
+              </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
                 Four things likely contribute to that gap. None of them has
                 been isolated or quantified: the coupon to part knockdown gap
@@ -327,10 +368,6 @@ export default function ChassisFEValidationPage() {
                 matter most, but that&apos;s a guess, not something
                 I&apos;ve proven.
               </p>
-              <Figure
-                label="Predicted vs. actual torsional stiffness"
-                caption="Simulated (4500 N·m/deg) vs. measured (3900 N·m/deg) torsional stiffness: about a 15.4% overprediction relative to measured."
-              />
             </div>
           </section>
 
@@ -349,10 +386,11 @@ export default function ChassisFEValidationPage() {
                 factor on the coupon properties, ideally backed by a
                 fiber volume fraction or void content measurement on
                 chassis representative panels instead of small coupons.
-                Explicit modeling of joint overlap and bonded joint
-                compliance instead of merged shell edges. Longer term,
-                isolating the four error sources individually instead of
-                lumping them together, to see which one actually dominates.
+                Explicit modeling of joint overlap, hardpoints, and
+                bonded joint compliance instead of merged shell edges.
+                Longer term, isolating the four error sources individually
+                instead of lumping them together, to see which one actually
+                dominates.
               </p>
             </div>
           </section>
@@ -363,11 +401,6 @@ export default function ChassisFEValidationPage() {
             </p>
             <ul className="space-y-2 text-muted list-disc list-inside">
               <li>Predicted vs actual stiffness comparison chart</li>
-              <li>
-                A zone map that names which specific regions run single vs
-                double C9 (the current ACP screenshot shows thickness, not
-                the named zone boundaries)
-              </li>
             </ul>
           </section>
         </div>
