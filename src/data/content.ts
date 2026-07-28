@@ -79,28 +79,28 @@ export const projects: Project[] = [
     tags: ["SolidWorks", "Ansys FEA", "DFM"],
   },
   {
-    slug: "damper-line-cycle-time-tooling",
-    title: "Damper Line Cycle Time & Custom Tooling",
+    slug: "inspection-fixture-root-cause-redesign",
+    title: "Inspection Fixture Fracture Root Cause & Redesign",
     team: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran cycle time studies and designed custom tooling for a new second gen damper line for GM light duty trucks.",
+      "Root caused a repeat fracture in a Delrin inspection fixture and redesigned it, cutting bending stress from 115 MPa to 1.4 MPa and raising stiffness roughly 40x.",
     detail: [
-      "Ahead of a new second gen damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling for the assembly process.",
-      "I also flagged control faults in BOS Systems' assembly machines, so the line launched with fewer surprises.",
+      "A Delrin cantilever inspection fixture kept fracturing. I traced it to a hollow cross section on an overlong moment arm, which put 115 MPa of peak bending stress on the Delrin against a flexural strength of roughly 90 MPa at the 150 N service load it saw in use.",
+      "I redesigned it to a shortened solid section with a steel sleeve, which dropped the bending stress in the Delrin to 1.4 MPa and raised bending stiffness roughly 40x. That held the positional repeatability the fixture needed for a cobot vision check.",
     ],
-    tags: ["Manufacturing", "Tooling Design", "Cycle Time Studies"],
+    tags: ["Root Cause Analysis", "Tooling Design", "Manufacturing"],
   },
   {
     slug: "dyno-failure-root-cause-analysis",
-    title: "Dyno Failure Root Cause Analysis",
+    title: "Damper First Pass Yield Investigation",
     team: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran root cause analysis on 5 dampers that failed dyno validation during preproduction testing.",
+      "Investigating damper first pass yield with a cross functional team, tracing failures on six torn down units to out of spec tolerances and evaluating bore honing as the fix.",
     detail: [
-      "Five dampers failed dyno validation during preproduction testing. I measured critical dimensions and tolerances on each unit to find what was driving the failure.",
-      "That analysis shaped the fix before the line moved forward, lowering the risk of it happening again at volume.",
+      "Dampers were failing first pass yield, so I joined a cross functional team investigating why. I ran dyno characterization for a customer design office trial, looking at rod rotation and bleed past the piston, and tore down six failed units to trace the failures to out of spec tolerances.",
+      "I flagged that the dyno's velocity roll off near end of stroke understates bleed effects, since orifice force scales with v^2. Bore honing is the leading fix so far, and I'm evaluating it on cost per unit against the pass rate gain, alongside a tolerance sweep on the moving components.",
     ],
     tags: ["Root Cause Analysis", "GD&T", "Manufacturing"],
   },
@@ -110,10 +110,10 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Designed, selected materials for, and built a part buffer cart that protects cycle times during robot downtime.",
+      "Designed and built an overflow parts cart in house for $4k against a $12k external quote, using a single piece CNC tray for up to 9x the bending stiffness of the original bolted design.",
     detail: [
-      "To protect the damper line from robot downtime, I designed and built a part buffer cart that decouples the upstream robot station from downstream manual assembly.",
-      "The cart stores surplus parts so the line keeps flowing even when the upstream robot goes down, instead of stalling out.",
+      "To buffer output between a robotic cell and a downstream assembly station, I designed and built an overflow parts cart, delivering it in house for $4k all in against a $12k external quote.",
+      "The original design was a three board bolted tray. I replaced it with a single piece CNC tray, which eliminated shear slip at the bolted joints and raised bending stiffness up to 9x at the same material thickness.",
     ],
     tags: ["Manufacturing", "Tooling Design", "DFM"],
   },
@@ -191,7 +191,7 @@ export const experience: ExperienceItem[] = [
     org: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran cycle time studies and custom tooling for a new damper line, root caused dyno failed dampers, and built a part buffer cart to protect cycle times during robot downtime.",
+      "Root caused and redesigned a fracturing Delrin inspection fixture, joined a cross functional team investigating damper first pass yield, and built an overflow parts cart in house for $4k against a $12k outside quote.",
   },
   {
     role: "Chassis Lead Engineer",
