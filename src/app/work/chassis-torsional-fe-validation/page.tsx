@@ -1,33 +1,51 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { profile, teams } from "@/data/content";
+import { basePath } from "@/lib/basePath";
 
 export const metadata: Metadata = {
   title: `Chassis Layup Design & Torsional FE Validation | ${profile.name}`,
   description:
-    "How the FSAE chassis skin layup (C5 → C9) was developed against the SES, and how the Ansys ACP torsional stiffness model compares to physical rig testing.",
+    "How the FSAE chassis skin layup went from C5 to C9 against the SES, and how the Ansys ACP torsional stiffness model compares to physical rig testing.",
 };
 
 function Figure({
   label,
   caption,
   aspect = "aspect-video",
+  src,
 }: {
   label: string;
   caption: ReactNode;
   aspect?: string;
+  src?: string;
 }) {
   return (
     <figure className="my-8">
       <div
-        className={`relative w-full ${aspect} rounded-lg border border-dashed border-border bg-foreground/[0.03] flex items-center justify-center px-6 text-center`}
+        className={`relative w-full ${aspect} overflow-hidden rounded-lg ${
+          src
+            ? "border border-border"
+            : "border border-dashed border-border bg-foreground/[0.03] flex items-center justify-center px-6 text-center"
+        }`}
       >
-        <span className="font-mono text-xs uppercase tracking-widest text-muted">
-          Figure placeholder: {label}
-        </span>
+        {src ? (
+          <Image
+            src={`${basePath}${src}`}
+            alt={label}
+            fill
+            sizes="(min-width: 768px) 48rem, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <span className="font-mono text-xs uppercase tracking-widest text-muted">
+            Figure placeholder: {label}
+          </span>
+        )}
       </div>
       <figcaption className="mt-3 text-sm text-muted leading-relaxed">
         {caption}
@@ -84,24 +102,30 @@ export default function ChassisFEValidationPage() {
             </h2>
             <div className="space-y-6">
               <p className="text-lg text-muted leading-relaxed">
-                FSAE doesn&apos;t set a hard torsional-stiffness number to
-                hit. Stiffness is a design-points criterion, not a safety
+                FSAE doesn&apos;t set a hard torsional stiffness number to
+                hit. Stiffness is a design points criterion, not a safety
                 requirement. The real safety gate is the SES (Structural
                 Equivalency Sheet). It benchmarks composite panels against a
-                steel-tube baseline instead of an absolute strength value.
+                steel tube baseline instead of an absolute strength value.
                 Side impact, for example, has to equal or beat three 1&quot;
                 OD steel tubes (0.095&quot; wall, 1020 mild steel) under the
                 same load.
               </p>
               <p className="text-lg text-muted leading-relaxed">
-                Qualifying a panel means building it, testing it (3-point
+                Qualifying a panel means building it, testing it (3 point
                 bend, then puncture/shear), and uploading the
-                force-displacement data to the SES tool. It checks each zone
-                against its steel-tube-equivalent requirement.
+                force displacement data to the SES tool. It checks each zone
+                against its steel tube equivalent requirement.
               </p>
               <Figure
-                label="Force-displacement plot, SES qualification testing"
-                caption="Force-displacement data from the 3-point bend and puncture/shear tests used to qualify a panel against its SES steel-tube-equivalent requirement."
+                src="/images/three-point-bend-test.jpg"
+                label="3 point bend test rig"
+                caption="The MTS Criterion rig set up for 3 point bend qualification testing."
+              />
+              <Figure
+                src="/images/puncture-shear-test.jpg"
+                label="Puncture/shear test rig"
+                caption="Perimeter shear test setup, the second qualification test used alongside 3 point bend."
               />
               <p className="text-lg text-muted leading-relaxed">
                 Two rules shaped how much design freedom that left. Layer
@@ -123,7 +147,7 @@ export default function ChassisFEValidationPage() {
             </h2>
             <div className="space-y-6">
               <p className="text-lg text-muted leading-relaxed">
-                C9 is a 4-layer quasi-isotropic layup over foam core: 45°
+                C9 is a 4 layer quasi isotropic layup over foam core: 45°
                 biaxial twill, 0° UD, 90° UD, then a combined 0/90 UD layer.
                 It&apos;s the fourth iteration on this chassis skin, and it
                 matches or beats the previous baseline, C5, at roughly 20%
@@ -133,23 +157,29 @@ export default function ChassisFEValidationPage() {
                 C5 ran five layers (45° biaxial twill, 0° UD, 45° twill, 90°
                 UD, 45° twill), weighted heavily toward 45°, which
                 contributes less to torsional stiffness than 0°/90°. That
-                mattered because the team&apos;s 3-point bend rig is
-                0°-biased, so a twill-heavy layup underperforms on the exact
+                mattered because the team&apos;s 3 point bend rig is
+                0° biased, so a twill heavy layup underperforms on the exact
                 test used to qualify it. C6, C7, and C8 were tested the
                 following summer. All three were rejected: none matched or
                 beat C5.
               </p>
               <Figure
-                label="C9 layup cross-section (vs. C5)"
-                caption="Layer-by-layer cross-section of the C9 layup, shown alongside C5 for comparison."
+                src="/images/chassis-layup-vacuum-bagging.jpg"
+                label="C9 layup under vacuum"
+                caption="The C9 layup mid layup, bagged and under vacuum on the chassis mold."
               />
               <p className="text-lg text-muted leading-relaxed">
                 C9 clears the SES while weighted more toward 0°, where the
-                bend test actually loads it. Higher-load zones like side
+                bend test actually loads it. Higher load zones like side
                 impact use &quot;double C9,&quot; the same stack doubled to
-                eight layers under the no-retest rule, instead of a
+                eight layers under the no retest rule, instead of a
                 separately qualified layup.
               </p>
+              <Figure
+                src="/images/chassis-monocoque-interior.jpg"
+                label="Cured monocoque interior"
+                caption="Interior of the cured carbon fiber monocoque, showing the C9 skin layup after infusion."
+              />
             </div>
           </section>
 
@@ -165,7 +195,7 @@ export default function ChassisFEValidationPage() {
                 The chassis is modeled in Ansys ACP (Composite PrepPost) as
                 one continuous layered shell. Plies build inward from the
                 outer surface, no solid elements. It&apos;s zoned by actual
-                layup: skin-only regions, single C9, double C9, 1&quot; foam
+                layup: skin only regions, single C9, double C9, 1&quot; foam
                 core, 0.5&quot; foam core, and so on.
               </p>
               <Figure
@@ -192,20 +222,26 @@ export default function ChassisFEValidationPage() {
                 testing, not Ansys&apos; default carbon library: tensile
                 tests on biaxial and unidirectional coupons at 0°, 45°, and
                 90°, five per direction, averaged into modulus, shear
-                modulus, and Poisson&apos;s ratio, strain-gauge validated
+                modulus, and Poisson&apos;s ratio, strain gauge validated
                 along the way. That number is a mean, not a
-                knockdown-derated property. No fiber-volume-fraction or
-                void-content adjustment has been applied yet. The coupons
+                knockdown derated property. No fiber volume fraction or
+                void content adjustment has been applied yet. The coupons
                 were made under close to ideal conditions (small,
-                vacuum-infused, smooth glass tooling). The full chassis is
-                vacuum-infused at a much larger scale and doesn&apos;t hit
+                vacuum infused, smooth glass tooling). The full chassis is
+                vacuum infused at a much larger scale and doesn&apos;t hit
                 the same infusion quality. Microscopy of the coupon
-                cross-sections shows voids even under those ideal
+                cross sections shows voids even under those ideal
                 conditions, the visual version of that gap.
               </p>
               <Figure
-                label="Microscope image, voids in coupon cross-section"
-                caption="Cross-section of a test coupon at 20 µm scale, showing voids even under near-ideal, small-scale vacuum infusion."
+                src="/images/coupon-glass-tooling-infusion.jpg"
+                label="Coupon vacuum infusion on glass tooling"
+                caption="Coupons vacuum infused on smooth glass tooling, the near ideal conditions referenced above."
+              />
+              <Figure
+                src="/images/coupon-microscope-voids.png"
+                label="Microscope image, voids in coupon cross section"
+                caption="Cross section of a test coupon at 20 µm scale, showing voids even under near ideal, small scale vacuum infusion."
                 aspect="aspect-square"
               />
               <p className="text-lg text-muted leading-relaxed">
@@ -218,7 +254,7 @@ export default function ChassisFEValidationPage() {
                 tested a year earlier by the capstone team, who also ran the
                 coupon testing. The mesh is capped at 32,000 elements, the
                 ceiling of the Ansys student license, not a
-                convergence-driven choice. No mesh convergence study has
+                convergence driven choice. No mesh convergence study has
                 been run yet.
               </p>
             </div>
@@ -235,7 +271,7 @@ export default function ChassisFEValidationPage() {
               <p className="text-lg text-muted leading-relaxed">
                 Simulated torsional stiffness came out to 4500 N·m/deg. The
                 physical rig measured 3900 N·m/deg. That&apos;s about a
-                15.4% over-prediction relative to measured (13.3% relative
+                15.4% overprediction relative to measured (13.3% relative
                 to simulated). Sim stiffer than real is the direction FE
                 torsion models usually miss in: shell models tend to leave
                 out compliance sources the real structure has.
@@ -245,23 +281,29 @@ export default function ChassisFEValidationPage() {
                 caption="The physical torsion rig used to measure chassis stiffness, built and tested by the capstone team."
               />
               <Figure
-                label="FE deformed shape and stress under the torsional load case"
-                caption="Simulated deformation and equivalent stress under the torsional couple at the front suspension pickups."
+                src="/images/fe-deflection-animation.gif"
+                label="FE Y axis deflection under torsional load"
+                caption="Simulated directional deformation under the torsional couple at the front suspension pickups."
+              />
+              <Figure
+                src="/images/fe-stress-animation.gif"
+                label="FE equivalent stress under torsional load"
+                caption="Simulated equivalent (von Mises) stress under the same torsional load case."
               />
               <p className="text-lg text-muted leading-relaxed">
                 Four things likely contribute to that gap. None of them has
-                been isolated or quantified: the coupon-to-part knockdown gap
-                above (plus build variability from a multi-person layup
+                been isolated or quantified: the coupon to part knockdown gap
+                above (plus build variability from a multi person layup
                 process), the unmodeled joint overlap, unmodeled
-                bonded-joint compliance at bulkheads and pickups, and the
-                uncertain effect of the 32k-element mesh cap. My guess is
-                the build-quality gap and the two joint-related sources
+                bonded joint compliance at bulkheads and pickups, and the
+                uncertain effect of the 32k element mesh cap. My guess is
+                the build quality gap and the two joint related sources
                 matter most, but that&apos;s a guess, not something
                 I&apos;ve proven.
               </p>
               <Figure
                 label="Predicted vs. actual torsional stiffness"
-                caption="Simulated (4500 N·m/deg) vs. measured (3900 N·m/deg) torsional stiffness: about a 15.4% over-prediction relative to measured."
+                caption="Simulated (4500 N·m/deg) vs. measured (3900 N·m/deg) torsional stiffness: about a 15.4% overprediction relative to measured."
               />
             </div>
           </section>
@@ -276,13 +318,13 @@ export default function ChassisFEValidationPage() {
             <div className="space-y-6">
               <p className="text-lg text-muted leading-relaxed">
                 Four things would tighten this up. A mesh convergence study,
-                to check whether the 32k-element result is actually
-                converged and not just license-limited. A measured knockdown
+                to check whether the 32k element result is actually
+                converged and not just license limited. A measured knockdown
                 factor on the coupon properties, ideally backed by a
-                fiber-volume-fraction or void-content measurement on
-                chassis-representative panels instead of small coupons.
-                Explicit modeling of joint overlap and bonded-joint
-                compliance instead of merged shell edges. Longer-term,
+                fiber volume fraction or void content measurement on
+                chassis representative panels instead of small coupons.
+                Explicit modeling of joint overlap and bonded joint
+                compliance instead of merged shell edges. Longer term,
                 isolating the four error sources individually instead of
                 lumping them together, to see which one actually dominates.
               </p>
@@ -294,21 +336,13 @@ export default function ChassisFEValidationPage() {
               Still needed to finish this page
             </p>
             <ul className="space-y-2 text-muted list-disc list-inside">
-              <li>Microscope images of voids in coupon cross-sections</li>
               <li>
-                Layup diagram / cross-section of C9 (ideally with C5
-                alongside for comparison)
+                Force displacement data plots (line charts) from the 3 point
+                bend and puncture/shear tests
               </li>
-              <li>
-                Force-displacement plots from 3-point bend and puncture/shear
-                tests
-              </li>
-              <li>
-                FE model screenshots: layup zoning, boundary conditions,
-                deformed shape under torsional load
-              </li>
-              <li>Photos of the physical torsion rig</li>
-              <li>Predicted-vs-actual stiffness comparison chart</li>
+              <li>FE model screenshot: layup zoning and boundary conditions</li>
+              <li>Photo of the physical torsion rig</li>
+              <li>Predicted vs actual stiffness comparison chart</li>
             </ul>
           </section>
         </div>

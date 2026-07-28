@@ -6,7 +6,7 @@ export const profile = {
     greetingFollowup: "Nice to meet you",
     lines: ["Wanna learn more about me?", "Just scroll down"],
   },
-  bio: "Hey! I'm Andrew, a 3rd-year mechanical engineering student currently on my co-op year, available to work Sept 2026-2027. I'd love to chat about my experience, so reach out!",
+  bio: "Hey! I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available to work Sept 2026 to 2027. I'd love to chat about my experience, so reach out!",
   location: "Toronto, ON, Canada",
   school: "McMaster University",
   gradDate: "May 2028",
@@ -56,9 +56,9 @@ export const projects: Project[] = [
     team: "FSAE",
     period: "June 2025 - Present",
     description:
-      "Leading carbon fiber monocoque and chassis design for a 20-engineer team, cutting weight 20% while validating structural performance.",
+      "Leading carbon fiber monocoque and chassis design for a 20 engineer team, cutting weight 20% while validating structural performance.",
     detail: [
-      "As Chassis Lead Engineer for Mac Formula Electric, I run chassis and monocoque design for a 20-engineer team, from layup strategy through structural validation.",
+      "As Chassis Lead Engineer for Mac Formula Electric, I run chassis and monocoque design for a 20 engineer team, from layup strategy through structural validation.",
       "This redesign cut chassis weight 20% while keeping most of the structural integrity, and I mentored teammates in SolidWorks and composite design along the way.",
       "With the capstone team, I validated the chassis FE model against physical torsional stiffness testing, landing within 13.3% of the measured result using our own material data.",
     ],
@@ -84,9 +84,9 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran cycle time studies and designed custom tooling for a new second-gen damper line for GM light duty trucks.",
+      "Ran cycle time studies and designed custom tooling for a new second gen damper line for GM light duty trucks.",
     detail: [
-      "Ahead of a new second-gen damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling for the assembly process.",
+      "Ahead of a new second gen damper line launch for GM light duty trucks, I ran cycle time studies and designed custom tooling for the assembly process.",
       "I also flagged control faults in BOS Systems' assembly machines, so the line launched with fewer surprises.",
     ],
     tags: ["Manufacturing", "Tooling Design", "Cycle Time Studies"],
@@ -97,9 +97,9 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran root cause analysis on 5 dampers that failed dyno validation during pre-production testing.",
+      "Ran root cause analysis on 5 dampers that failed dyno validation during preproduction testing.",
     detail: [
-      "Five dampers failed dyno validation during pre-production testing. I measured critical dimensions and tolerances on each unit to find what was driving the failure.",
+      "Five dampers failed dyno validation during preproduction testing. I measured critical dimensions and tolerances on each unit to find what was driving the failure.",
       "That analysis shaped the fix before the line moved forward, lowering the risk of it happening again at volume.",
     ],
     tags: ["Root Cause Analysis", "GD&T", "Manufacturing"],
@@ -123,10 +123,10 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 - Aug 2025",
     description:
-      "Resolved high-priority assembly issues with design solutions engineered in Siemens NX.",
+      "Resolved high priority assembly issues with design solutions engineered in Siemens NX.",
     detail: [
-      "I resolved high-priority assembly issues in Siemens NX, working across Hull Additions, Propulsion, and manufacturing teams.",
-      "The goal on every fix was the same: an integrated, production-ready solution, not just a patch that pushed the problem downstream.",
+      "I resolved high priority assembly issues in Siemens NX, working across Hull Additions, Propulsion, and manufacturing teams.",
+      "The goal on every fix was the same: an integrated, production ready solution, not just a patch that pushed the problem downstream.",
     ],
     tags: ["Siemens NX", "GD&T"],
   },
@@ -139,7 +139,7 @@ export const projects: Project[] = [
       "Supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T and verifying it through prototype testing.",
     detail: [
       "I supported bilge adapter design in Siemens NX for water evacuation testing, applying GD&T to keep it within tolerance through manufacturing and assembly.",
-      "I also verified it through prototype testing to confirm it performed as intended before sign-off.",
+      "I also verified it through prototype testing to confirm it performed as intended before sign off.",
     ],
     tags: ["Siemens NX", "GD&T"],
   },
@@ -149,9 +149,9 @@ export const projects: Project[] = [
     team: "General Dynamics",
     period: "May 2025 - Aug 2025",
     description:
-      "Built an automated tool that pulls real part data into Excel for precise weight verification and mass roll-ups.",
+      "Built an automated tool that pulls real part data into Excel for precise weight verification and mass roll ups.",
     detail: [
-      "I built an automated tool that pulls real part data into Excel for precise mobility assembly mass roll-ups.",
+      "I built an automated tool that pulls real part data into Excel for precise mobility assembly mass roll ups.",
       "This improved the accuracy of vehicle weight compliance reporting and cut the manual effort needed to keep it current.",
     ],
     tags: ["Excel / VBA", "GD&T"],
@@ -191,21 +191,21 @@ export const experience: ExperienceItem[] = [
     org: "Multimatic",
     period: "May 2026 - Present",
     description:
-      "Ran cycle time studies and custom tooling for a new damper line, root-caused dyno-failed dampers, and built a part buffer cart to protect cycle times during robot downtime.",
+      "Ran cycle time studies and custom tooling for a new damper line, root caused dyno failed dampers, and built a part buffer cart to protect cycle times during robot downtime.",
   },
   {
     role: "Chassis Lead Engineer",
     org: "Mac Formula Electric",
     period: "June 2025 - June 2026",
     description:
-      "Led the carbon fiber monocoque and chassis subsystems for a 20-engineer team, cutting chassis weight 20% while mentoring teammates in SolidWorks and composite design.",
+      "Led the carbon fiber monocoque and chassis subsystems for a 20 engineer team, cutting chassis weight 20% while mentoring teammates in SolidWorks and composite design.",
   },
   {
     role: "Mobility Systems Design Engineer Intern",
     org: "General Dynamics",
     period: "May 2025 - Aug 2025",
     description:
-      "Resolved high-priority assembly issues in Siemens NX, built an automated weight verification tool for mass roll-ups, and wrote a Statement of Work for new gear oil durability tests.",
+      "Resolved high priority assembly issues in Siemens NX, built an automated weight verification tool for mass roll ups, and wrote a Statement of Work for new gear oil durability tests.",
   },
   {
     role: "Project Engineering Intern",
