@@ -189,14 +189,16 @@ export default function ChassisFEValidationPage() {
               </p>
               <FigureRow>
                 <Figure
-                  src="/images/chassis-dry-layup-mold.jpg"
-                  label="Dry layup in the chassis mold"
-                  caption="Dry carbon and H80 PVC foam core laid into the mold, before infusion."
+                  src="/images/chassis-outer-skin-layup.jpg"
+                  label="Outer skin carbon in the mold"
+                  aspect="aspect-[4/3]"
+                  caption="Outer skin carbon laid dry into the mold. These plies go down first."
                 />
                 <Figure
-                  src="/images/chassis-monocoque-interior.jpg"
-                  label="Cured monocoque interior"
-                  caption="Interior of the cured monocoque, showing the C9 skin after infusion."
+                  src="/images/chassis-dry-layup-mold.jpg"
+                  label="Foam core laid over the skin plies"
+                  aspect="aspect-[4/3]"
+                  caption="H80 PVC foam core going in next, on top of those plies. Still dry at this point, before infusion."
                 />
               </FigureRow>
               <p className="text-lg text-muted leading-relaxed">
