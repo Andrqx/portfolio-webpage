@@ -6,7 +6,7 @@ export const profile = {
     greetingFollowup: "Nice to meet you",
     lines: ["Wanna learn more about me?", "Just scroll down"],
   },
-  bio: "I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available to work Sept 2026 to 2027. I'd love to chat about my experience, so reach out!",
+  bio: "I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available for work terms from September 2026 through August 2027. I'd love to chat about my experience, so reach out!",
   location: "Toronto, ON, Canada",
   school: "McMaster University",
   gradDate: "May 2028",
@@ -54,9 +54,9 @@ export const projects: Project[] = [
     slug: "carbon-fiber-monocoque-chassis",
     title: "Carbon Fiber Monocoque & Chassis",
     team: "FSAE",
-    period: "June 2025 - Present",
+    period: "June 2025 - June 2026",
     description:
-      "Leading carbon fiber monocoque and chassis design for a 20 engineer team, cutting weight 20% while validating structural performance.",
+      "Led carbon fiber monocoque and chassis design for a 20 engineer team, cutting weight 20% while validating structural performance.",
     detail: [
       "As Chassis Lead Engineer for Mac Formula Electric, I run chassis and monocoque design for a 20 engineer team, from layup strategy through structural validation.",
       "This redesign cut chassis weight 20% while keeping most of the structural integrity, and I mentored teammates in SolidWorks and composite design along the way.",

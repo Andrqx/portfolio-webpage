@@ -334,15 +334,11 @@ export default function ChassisFEValidationPage() {
                 torsion models usually miss in: shell models tend to leave
                 out compliance sources the real structure has.
               </p>
-              <FigureRow>
+              <FigureRow cols={1}>
                 <Figure
                   src="/images/physical-torsional-stiffness-rig.jpg"
                   label="Physical torsion rig"
                   caption="The physical torsion rig used to measure chassis stiffness, built and tested by the capstone team."
-                />
-                <Figure
-                  label="Predicted vs. actual torsional stiffness"
-                  caption="Simulated (4500 N·m/deg) vs. measured (3900 N·m/deg) torsional stiffness."
                 />
               </FigureRow>
               <FigureRow>
@@ -395,15 +391,6 @@ export default function ChassisFEValidationPage() {
                 dominates.
               </p>
             </div>
-          </section>
-
-          <section className="mt-20 pt-10 border-t border-border">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">
-              Still needed to finish this page
-            </p>
-            <ul className="space-y-2 text-muted list-disc list-inside">
-              <li>Predicted vs actual stiffness comparison chart</li>
-            </ul>
           </section>
         </div>
       </main>
