@@ -32,7 +32,7 @@ export default function Contact() {
                 key={social.label}
                 href={social.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
               >
                 {social.label}

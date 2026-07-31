@@ -5,18 +5,25 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: write
+# Default to no privileges. The one job that needs to write (to push the
+# built site to gh-pages) grants itself contents: write explicitly, so a
+# future job added here starts read-only instead of inheriting write.
+permissions: {}
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      # Third-party and first-party actions are pinned to a commit SHA, not a
+      # moving tag. A tag like v4 can be repointed at new code by whoever owns
+      # the action, and these run with a write-scoped GITHUB_TOKEN.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
           cache: npm
@@ -30,7 +37,7 @@ jobs:
           DEPLOY_TARGET: github-pages
 
       - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
