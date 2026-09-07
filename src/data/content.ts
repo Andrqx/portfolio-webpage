@@ -6,7 +6,7 @@ export const profile = {
     greetingFollowup: "Nice to meet you",
     lines: ["Wanna learn more about me?", "Just scroll down"],
   },
-  bio: "I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available for work terms from September 2026 through August 2027. I'd love to chat about my experience, so reach out!",
+  bio: "I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available for work terms from January 2027 through September 2027. I'd love to chat about my experience, so reach out!",
   location: "Toronto, ON, Canada",
   school: "McMaster University",
   gradDate: "May 2028",
