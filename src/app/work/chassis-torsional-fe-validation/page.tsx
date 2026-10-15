@@ -329,8 +329,8 @@ export default function ChassisFEValidationPage() {
               <p className="text-lg text-muted leading-relaxed">
                 Simulated torsional stiffness came out to 4500 N·m/deg. The
                 physical rig measured 3900 N·m/deg. That&apos;s about a
-                15.4% overprediction relative to measured (13.3% relative
-                to simulated). Sim stiffer than real is the direction FE
+                13% overprediction relative to simulated (15.4% relative
+                to measured). Sim stiffer than real is the direction FE
                 torsion models usually miss in: shell models tend to leave
                 out compliance sources the real structure has.
               </p>
