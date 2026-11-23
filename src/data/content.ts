@@ -38,23 +38,23 @@ export const hero: {
   textSide?: "left" | "right";
   keyLow: number;
   keyHigh: number;
-  /** Short line on the hero, on the side opposite your name on laptops (the left when textSide is "right"). Leave it empty to show nothing there. */
+  /** Short line on the hero: on laptops on the right with textSide "left" (opposite your name), and under your name with textSide "right". Leave it empty to show nothing there. */
   line: string;
 } = {
   figure: "/images/home/hero.jpg",
-  // The prepare script widens the photo by 10% on each side with a blurred
+  // The prepare script widens the photo by 12% on each side with a blurred
   // continuation of its own edges, so a laptop shows more of it. These
   // numbers are for that wider hero.jpg (the script prints how to convert
   // them): measured on the photo itself, face was
   // { x: 0.244, y: 0.459, rx: 0.0625, ry: 0.067 }.
-  face: { x: 0.2952, y: 0.459, rx: 0.05, ry: 0.067 },
-  // The photo is taller than wide, so a laptop shows a band across it (a
-  // little under half its height on a 2:1 screen): this keeps the tops of the
+  face: { x: 0.3057, y: 0.459, rx: 0.0475, ry: 0.067 },
+  // The photo is taller than wide, so a laptop shows a band across it (about
+  // half its height on a 2:1 screen): this keeps the tops of the
   // towers above your head. A phone shows the full height and about 60% of
   // the width, with you a little left of centre and the street on the right
   // (the blurred sides do not show there).
-  focus: [0.29, 0.35],
-  span: [0.1, 0.9],
+  focus: [0.31, 0.35],
+  span: [0.1203, 0.8803],
   // you are on the left of this photo, so your name goes over the city
   textSide: "right",
   keyLow: 0.06,
@@ -306,13 +306,20 @@ export type Org = {
    * the company's brand guidelines before using one.
    */
   logo?: string;
-  /** Optional photo under public/, shown behind the name. Without one the card is plain type in `tone`. */
+  /** Optional photo under public/, shown behind the name on the reel card (not on the org's page). Without one the card is plain type in `tone`. */
   image?: string;
   /** Which part of the photo to keep when the card crops it: [x, y] from 0 to 1, top left is [0, 0]. */
   imageFocus?: [number, number];
   /** Set to false when the photo already shows the company's name, so it is not written twice. */
   showName?: boolean;
   tone: CardTone;
+  /**
+   * The org's page (/experience/<slug>) normally shows just the name and then
+   * the projects. Set this to also show the label, the summary and the roles
+   * under the name. An org with no projects listed always shows its roles, so
+   * its page is not just a name.
+   */
+  pageIntro?: boolean;
 };
 
 export const orgs: Org[] = [
@@ -330,6 +337,8 @@ export const orgs: Org[] = [
     image: "/images/home/card-fsae.jpg",
     imageFocus: [0.5, 0.42],
     tone: "dark",
+    // the FSAE page keeps its summary and roles; the others go straight to the projects
+    pageIntro: true,
   },
   {
     slug: "multimatic",

@@ -279,9 +279,12 @@ body:has(.home) .noise-overlay {
     padding: 0 2.5rem;
   }
 
-  /* hero.textSide "right": the name on the right, for a photo with you on the left */
+  /* hero.textSide "right": the name on the right, for a photo with you on the
+     left, with hero.line under it on the same side */
   .home-hero[data-side="right"] {
-    flex-direction: row-reverse;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
     text-align: right;
   }
 

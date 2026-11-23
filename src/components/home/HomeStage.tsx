@@ -20,7 +20,7 @@ export type HomeProps = {
   /** footer year, worked out on the server so the built page and the browser agree */
   year: number;
   eyebrow: string;
-  /** a line on the hero, on the side opposite the name on laptops; empty to show nothing */
+  /** a line on the hero (opposite the name on laptops, or under it with heroSide "right"); empty to show nothing */
   tagline: string;
   /** which side the name sits on over the hero on laptops and wider */
   heroSide: "left" | "right";

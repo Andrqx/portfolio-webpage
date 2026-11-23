@@ -5,7 +5,7 @@
 //
 // Hero:    assets-src/hero-scene.webp (or .jpg, .png) -> public/images/home/hero.jpg
 //          A whole photo, background and all, drawn as dots across the screen.
-//          It is widened by 10% on each side with a blurred continuation of
+//          It is widened by 12% on each side with a blurred continuation of
 //          its own edges (HERO_SIDE_FILL, extendScene), so a laptop shows a
 //          little more of it; the script prints how to convert hero.face.
 //          The current one is the photo on a patio at night (the original is
@@ -116,13 +116,13 @@ async function shownSize(file) {
 }
 
 // How much the hero photo is widened on each side, as a share of the widened
-// image: 0.1 adds 10% on the left and 10% on the right, so on a laptop the
-// photo fills the middle 80% of the screen and shows more of its height (an
+// image: 0.12 adds 12% on the left and 12% on the right, so on a laptop the
+// photo fills the middle 76% of the screen and shows more of its height (an
 // upright photo is otherwise cropped to a band). The added sides are a blurred
 // continuation of the photo's own edges (see extendScene). Only photos
 // narrower than 2:1 are widened, and never past 2:1. Set it to 0 to keep the
 // photo exactly as it is.
-const HERO_SIDE_FILL = 0.1;
+const HERO_SIDE_FILL = 0.12;
 
 // Extends a photo (raw RGB, pw x ph) to `aspect` by continuing it past its left
 // and right edges. Only a thin strip along each edge is used, reflected back
