@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import SiteFooter from "@/components/SiteFooter";
+import { BackLink, Tags, labelClass } from "@/components/work/primitives";
 import { profile, teams } from "@/data/content";
 import { basePath } from "@/lib/basePath";
 
@@ -75,33 +75,19 @@ export default function ChassisFEValidationPage() {
 
   return (
     <>
-      <Nav />
+      <Header />
       <main className="pt-40 pb-32 px-6 md:px-10">
         <div className="mx-auto max-w-3xl">
-          <Link
-            href="/#work"
-            className="font-mono text-xs uppercase tracking-widest text-muted hover:text-foreground transition-colors"
-          >
-            ← Back to work
-          </Link>
+          <BackLink href="/experience/fsae/">Back to Mac Formula Electric</BackLink>
 
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mt-8 mb-4">
+          <p className={`${labelClass} mt-8 mb-4`}>
             {team?.org} · Chassis Skin (C9)
           </p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-10">
+          <h1 className="font-dot mb-10 text-[clamp(2.1rem,7vw,4.25rem)] font-black uppercase leading-[0.95]">
             Chassis Layup Design &amp; Torsional FE Validation
           </h1>
 
-          <div className="flex flex-wrap gap-2 mb-16">
-            {["Ansys ACP", "Ansys FEA", "Composite Design"].map((tag) => (
-              <span
-                key={tag}
-                className="font-mono text-[10px] uppercase tracking-widest border border-border rounded-full px-3 py-1 text-muted"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <Tags tags={["Ansys ACP", "Ansys FEA", "Composite Design"]} className="mb-16" />
 
           <section>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-4">
@@ -394,7 +380,7 @@ export default function ChassisFEValidationPage() {
           </section>
         </div>
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

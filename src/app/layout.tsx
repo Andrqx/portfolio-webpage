@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Geist_Mono, Doto } from "next/font/google";
 import "./globals.css";
-import TechnoBackground from "@/components/TechnoBackground";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -13,9 +12,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Dot-matrix display face for headings.
+const doto = Doto({
+  variable: "--font-doto",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Andrew Evans | Mechanical Engineer",
-  description: "Portfolio of Andrew Evans, mechanical engineering student and chassis lead at Mac Formula Electric.",
+  description: "Portfolio of Andrew Evans, mechanical engineering student at McMaster University and former chassis lead at Mac Formula Electric.",
 };
 
 export default function RootLayout({
@@ -26,7 +31,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}
+      // Next 16 only turns off the CSS smooth scrolling during route changes when
+      // this is set, so moving between pages jumps instead of animating the scroll.
+      data-scroll-behavior="smooth"
+      className={`${spaceGrotesk.variable} ${geistMono.variable} ${doto.variable} h-full antialiased`}
     >
       <head>
         {/*
@@ -47,9 +55,8 @@ export default function RootLayout({
         <meta name="referrer" content="strict-origin-when-cross-origin" />
       </head>
       <body className="min-h-full flex flex-col">
-        <TechnoBackground />
         <div className="noise-overlay" />
-        {children}
+        <div className="relative z-10 flex min-h-full flex-col">{children}</div>
       </body>
     </html>
   );

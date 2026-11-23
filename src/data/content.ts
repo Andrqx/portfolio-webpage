@@ -1,13 +1,6 @@
 export const profile = {
   name: "Andrew Evans",
   role: "Mechanical Engineer",
-  heroIntro: {
-    greeting: "Hey",
-    greetingFollowup: "Nice to meet you",
-    lines: ["Wanna learn more about me?", "Just scroll down"],
-  },
-  bio: "I'm Andrew, a 3rd year mechanical engineering student currently on my work term, available for work terms from January 2027 through September 2027. I'd love to chat about my experience, so reach out!",
-  location: "Toronto, ON, Canada",
   school: "McMaster University",
   gradDate: "May 2028",
   email: "evansa25@mcmaster.ca",
@@ -15,6 +8,68 @@ export const profile = {
     { label: "LinkedIn", href: "https://www.linkedin.com/in/andrew-evans-255366248/" },
   ],
 };
+
+// Hero. `figure` is the picture drawn as dots behind your name: now your
+// photo on a patio at night, the whole scene, filling the screen.
+//
+// To change the photo: put the new one at assets-src/hero-scene.webp (or .jpg,
+// .png; keep only one), run
+//   node scripts/prepare-home-assets.mjs hero
+// and it rewrites public/images/home/hero.jpg. Then set `face` to where your
+// head is in the new picture, and `focus` to the part that should stay in view.
+// The Rock of Cashel photo used before is assets-src/hero-scene-cashel.jpg,
+// with face { x: 0.508, y: 0.475, rx: 0.055, ry: 0.0975 } and focus [0.508, 0.12].
+//
+// `figure` can also be a cutout of you on a transparent background (a .png or
+// .webp, see the README), or a short looping clip ("/media/hero.mp4") shot
+// against a dark background: anything darker than keyLow is treated as
+// background. Set it to undefined to get the generated placeholder figure back.
+export const hero: {
+  figure?: string;
+  /** Where the head is in the picture, as fractions from the top left: centre (between the eyes and the nose), half the face width, half the height from the top of the head (or hat) to the chin. Places the glitch streaks and keeps your head in view when a screen crops the photo; for a cutout it also centres you on the screen and places the side light. Update it whenever you change the photo. */
+  face: { x: number; y: number; rx: number; ry: number };
+  /** For a whole photo (a .jpg): which part stays in view when the screen crops it, [x, y] from 0 to 1, top left is [0, 0], like CSS object-position. On very wide or narrow screens the crop moves only as far as it must to keep your head (from `face`) in view. */
+  focus?: [number, number];
+  /** For a photo the prepare script widened: where the real photo sits across hero.jpg, [left, right] from 0 to 1 (the script prints it). Screens narrower than the photo then never show the blurred sides. Leave it out for a photo that was not widened. */
+  span?: [number, number];
+  /** Which side your name sits on over the hero on laptops and wider, and on phones held sideways (phones held upright put it at the bottom left). Pick the side your face is not on. */
+  textSide?: "left" | "right";
+  keyLow: number;
+  keyHigh: number;
+  /** Short line on the right of the hero. Leave it empty to show nothing there. */
+  line: string;
+} = {
+  figure: "/images/home/hero.jpg",
+  // The prepare script widens the photo by 10% on each side with a blurred
+  // continuation of its own edges, so a laptop shows more of it. These
+  // numbers are for that wider hero.jpg (the script prints how to convert
+  // them): measured on the photo itself, face was
+  // { x: 0.244, y: 0.459, rx: 0.0625, ry: 0.067 }.
+  face: { x: 0.2952, y: 0.459, rx: 0.05, ry: 0.067 },
+  // The photo is taller than wide, so a laptop shows a band across it (a
+  // little under half its height on a 2:1 screen): this keeps the tops of the
+  // towers above your head. A phone shows the full height and about 60% of
+  // the width, with you a little left of centre and the street on the right
+  // (the blurred sides do not show there).
+  focus: [0.29, 0.35],
+  span: [0.1, 0.9],
+  // you are on the left of this photo, so your name goes over the city
+  textSide: "right",
+  keyLow: 0.06,
+  keyHigh: 0.16,
+  line: "",
+};
+
+// About section paragraphs, shown under "About me" over the team photo. The
+// first one is set a little larger. Leave the list empty to show only the
+// heading. Each paragraph makes the about section 0.8 of a screen longer, so
+// there is time to read it before the contact section comes in. That fits about
+// 0.4 of a screen of text per paragraph (roughly 350 characters on a laptop);
+// longer text still works, it just scrolls past faster.
+// Written from the bio on the old site and the experience list below.
+export const about: string[] = [
+  "I'm Andrew, a 3rd year mechanical engineering student at McMaster, currently on a work term at Multimatic. I spent three years on the Mac Formula Electric chassis, the last one as chassis lead, and I'm now on the powertrain electromechanical subteam.",
+];
 
 export const skills = [
   "SolidWorks",
@@ -47,6 +102,8 @@ export type Project = {
   detail: string[];
   tags: string[];
   caseStudyHref?: string;
+  /** Shown as a feature at the top of the experience page when the project has a case study. */
+  caseStudy?: { title: string; summary: string; image: string; imageAlt: string };
 };
 
 export const projects: Project[] = [
@@ -58,12 +115,19 @@ export const projects: Project[] = [
     description:
       "Led carbon fiber monocoque and chassis design for a 20 engineer team, cutting weight 20% while validating structural performance.",
     detail: [
-      "As Chassis Lead Engineer for Mac Formula Electric, I run chassis and monocoque design for a 20 engineer team, from layup strategy through structural validation.",
+      "As Chassis Lead Engineer for Mac Formula Electric, I ran chassis and monocoque design for a 20 engineer team, from layup strategy through structural validation.",
       "This redesign cut chassis weight 20% while keeping most of the structural integrity, and I mentored teammates in SolidWorks and composite design along the way.",
       "With the capstone team, I validated the chassis FE model against physical torsional stiffness testing, landing within 13.3% of the measured result using our own material data.",
     ],
     tags: ["SolidWorks", "Ansys ACP", "Ansys FEA"],
     caseStudyHref: "/work/chassis-torsional-fe-validation",
+    caseStudy: {
+      title: "Chassis Layup Design & Torsional FE Validation",
+      summary:
+        "How the FSAE chassis skin layup went from C5 to C9 against the SES, and how the Ansys ACP torsional stiffness model compares to physical rig testing. Simulated torsional stiffness came out to 4500 N·m/deg. The physical rig measured 3900 N·m/deg.",
+      image: "/images/fe-stress-animation.gif",
+      imageAlt: "FE equivalent stress under torsional load",
+    },
   },
   {
     slug: "firewall-dfm-redesign",
@@ -208,13 +272,6 @@ export const experience: ExperienceItem[] = [
       "Resolved high priority assembly issues in Siemens NX, built an automated weight verification tool for mass roll ups, and wrote a Statement of Work for new gear oil durability tests.",
   },
   {
-    role: "Project Engineering Intern",
-    org: "Town of Ajax",
-    period: "May 2024 - Aug 2024",
-    description:
-      "Cut costs 14% on a $3M infrastructure budget through resource calibration and cost analysis, and ran quality inspections against engineering drawings and standards.",
-  },
-  {
     role: "Data Analytics Intern",
     org: "Nokia",
     period: "July 2022 - Aug 2022",
@@ -222,3 +279,118 @@ export const experience: ExperienceItem[] = [
       "Built interactive Power BI dashboards for key network performance indicators and automated Excel reporting, cutting manual processing time 40%.",
   },
 ];
+
+// Colour of a reel card that has no photo yet.
+export type CardTone = "dark" | "light" | "accent" | "blue";
+
+// One card per org on the "Selected work" reel, in this order.
+// Each card links to /experience/<slug>, which lists the matching roles from
+// `experience` (matched on `name`) and the projects whose team is `team`.
+export type Org = {
+  slug: string;
+  /** Must match `org` on the experience entries. */
+  name: string;
+  label: string;
+  team?: TeamKey;
+  summary: string;
+  /** Line under the big name on the reel card. */
+  title: string;
+  /** Smaller line under the title on the reel card. */
+  period: string;
+  /**
+   * Optional official logo file under public/ (SVG or PNG with a transparent
+   * background). When set it replaces the name set in type on the card. Check
+   * the company's brand guidelines before using one.
+   */
+  logo?: string;
+  /** Optional photo under public/, shown behind the name. Without one the card is plain type in `tone`. */
+  image?: string;
+  /** Which part of the photo to keep when the card crops it: [x, y] from 0 to 1, top left is [0, 0]. */
+  imageFocus?: [number, number];
+  /** Set to false when the photo already shows the company's name, so it is not written twice. */
+  showName?: boolean;
+  tone: CardTone;
+};
+
+export const orgs: Org[] = [
+  {
+    slug: "fsae",
+    title: "Chassis Lead | Carbon Fiber Monocoque",
+    period: "June 2025 - June 2026",
+    name: "Mac Formula Electric",
+    label: "FSAE",
+    team: "FSAE",
+    summary:
+      "Three years on the carbon fiber monocoque and chassis, the last one as Chassis Lead for a 20 engineer team. Chassis weight came down 20%, and the FE model landed within 13.3% of the physical torsion test.",
+    // the team with the Canadian flag and car 101 (from assets-src/card-fsae.webp);
+    // a little above centre, so wide crops keep the top row's heads
+    image: "/images/home/card-fsae.jpg",
+    imageFocus: [0.5, 0.42],
+    tone: "dark",
+  },
+  {
+    slug: "multimatic",
+    title: "Manufacturing Engineering | Ride Dynamics",
+    period: "May 2026 - Present",
+    name: "Multimatic",
+    label: "Internship",
+    team: "Multimatic",
+    summary:
+      "Ride dynamics manufacturing. Root caused a fracturing Delrin fixture and cut its peak bending stress from 115 MPa to 1.4 MPa. Built an overflow parts cart in house for $4k against a $12k outside quote.",
+    image: "/images/home/card-multimatic.jpg",
+    imageFocus: [0.5, 0.5],
+    tone: "dark",
+  },
+  {
+    slug: "general-dynamics",
+    title: "Design Engineering | Mobility Systems",
+    period: "May 2025 - Aug 2025",
+    name: "General Dynamics",
+    label: "Internship",
+    team: "General Dynamics",
+    summary:
+      "Mobility systems design in Siemens NX. Fixed high priority hull assembly issues, built a weight verification tool for mass roll ups, and wrote the durability test spec for new gear oils.",
+    image: "/images/home/card-general-dynamics.jpg",
+    imageFocus: [0.5, 0.55],
+    tone: "accent",
+  },
+  {
+    slug: "nokia",
+    title: "Data Analytics | Network Performance",
+    period: "July 2022 - Aug 2022",
+    name: "Nokia",
+    label: "Internship",
+    summary:
+      "Power BI dashboards for network performance indicators and automated Excel reporting. Manual processing time dropped 40%.",
+    image: "/images/home/card-nokia.jpg",
+    imageFocus: [0.7, 0.5],
+    // the photo has Nokia's own logo across the middle
+    showName: false,
+    tone: "blue",
+  },
+];
+
+// Full screen pictures on the home page, relative to /public. Set one to
+// undefined to get a generated stand-in.
+export const scenes: {
+  about?: string;
+  contact?: string;
+  /** Which part of the contact picture stays in view when the screen crops it. */
+  contactAnchor: "top" | "middle" | "bottom";
+} = {
+  // behind "About me": the team at the racetrack, prepared by
+  // scripts/prepare-home-assets.mjs
+  about: "/images/home/about-team.jpg",
+  // behind the contact section: a lavender field under a blue sky, prepared by
+  // scripts/prepare-home-assets.mjs
+  contact: "/images/home/contact.jpg",
+  contactAnchor: "middle",
+};
+
+// Headings on the home page.
+export const homeCopy = {
+  workHeading: "Selected work",
+  aboutLabel: "About me",
+  contactHeadline: "Reach out, happy to talk.",
+  contactSub: "Email is the fastest way to reach me.",
+};
