@@ -235,6 +235,24 @@ body:has(.home) .noise-overlay {
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
 }
 
+/* A light frosted box behind the about paragraphs (not the heading): it blurs
+   the photo behind them, the team's black shirts and faces, and lightens it a
+   little, so the white text reads, on phones above all. */
+.home-about-panel {
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem 0.95rem;
+  background: rgba(226, 231, 240, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* The blur can only see the photo when no parent turns itself into a separate
+   group, which will-change: opacity does, so the about layer leaves it out. */
+.home-layer.home-text {
+  will-change: transform;
+}
+
 .home-pulse {
   width: 0.5rem;
   height: 0.5rem;

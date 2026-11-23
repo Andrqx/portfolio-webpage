@@ -330,14 +330,22 @@ export default function HomeStage(props: HomeProps) {
               <h2 id="about-h" className="font-dot glow text-4xl font-black uppercase leading-none md:text-[2.7rem]" data-scramble>
                 {props.about.label}
               </h2>
-              {props.about.lead && (
-                <p className="mt-5 font-mono text-base font-bold uppercase leading-snug tracking-[0.06em] md:text-xl">{props.about.lead}</p>
+              {(props.about.lead || props.about.body.length > 0) && (
+                // a light frosted box behind the paragraphs only, so they read over the photo
+                <div className="home-about-panel">
+                  {props.about.lead && (
+                    <p className="font-mono text-base font-bold uppercase leading-snug tracking-[0.06em] md:text-xl">{props.about.lead}</p>
+                  )}
+                  {props.about.body.map((p, i) => (
+                    <p
+                      key={p}
+                      className={`${i > 0 || props.about.lead ? "mt-3 " : ""}font-mono text-sm uppercase leading-snug tracking-[0.06em] opacity-85 md:text-lg`}
+                    >
+                      {p}
+                    </p>
+                  ))}
+                </div>
               )}
-              {props.about.body.map((p) => (
-                <p key={p} className="mt-3 font-mono text-sm uppercase leading-snug tracking-[0.06em] opacity-85 md:text-lg">
-                  {p}
-                </p>
-              ))}
             </div>
           </section>
 
