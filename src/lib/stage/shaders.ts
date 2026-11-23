@@ -471,6 +471,7 @@ uniform float uSceneAAsp;
 uniform sampler2D uContactTex;
 uniform float uContactAsp;
 uniform float uContactAnchor;
+uniform float uTexel;     // CSS px per scene texel (1, more on very wide screens and slow machines)
 
 const float TANF = ${f(REEL.TANF)};
 const float DIST = ${f(REEL.DIST)};
@@ -595,10 +596,12 @@ vec3 about(vec2 uv) {
 // The reel's ground: dark grey with a faint technical grid. Fine lines, a
 // heavier line every fourth, and small crosses where the heavier lines meet;
 // a little lighter toward the middle. The cells are a share of the screen's
-// height, so it looks the same on every screen.
+// height (a whole number of texels, so every line is one crisp texel), and the
+// lines are fainter where texels are larger or the cells small, so the grid
+// weighs about the same on every screen and quality step.
 vec3 reelBg(vec2 p) {
-  vec2 px = vUv * uRes;                 // scene texels from the bottom left
-  float cell = uRes.y / 36.0;           // about 26 px on a 945 px tall screen
+  vec2 px = vUv * uRes - 0.5;           // texel centres on whole numbers, from the bottom left
+  float cell = max(6.0, floor(uRes.y / 36.0 + 0.5));   // about 26 px on a 945 px tall screen
   vec2 g = px / cell;
   // distance to the nearest fine and heavy line, in texels
   vec2 dMinor = abs(fract(g + 0.5) - 0.5) * cell;
@@ -609,10 +612,11 @@ vec3 reelBg(vec2 p) {
   float arm = cell * 0.33;
   float crossX = (1.0 - smoothstep(0.4, 1.2, dMajor.y)) * step(dMajor.x, arm);
   float crossY = (1.0 - smoothstep(0.4, 1.2, dMajor.x)) * step(dMajor.y, arm);
-  float cross = min(1.0, crossX + crossY);
+  float marks = min(1.0, crossX + crossY);
+  float weight = clamp(cell * uTexel / 26.0, 0.4, 1.0) / uTexel;
   vec2 v = p * vec2(0.55, 0.85);
   vec3 c = vec3(0.118, 0.122, 0.133) * (1.1 - 0.22 * dot(v, v));
-  return c + vec3(0.78, 0.84, 0.92) * (0.02 * minor + 0.032 * major + 0.06 * cross);
+  return c + vec3(0.78, 0.84, 0.92) * (0.035 * minor + 0.032 * major + 0.06 * marks) * weight;
 }
 
 float sdRoundBox(vec2 p, vec2 b, float r) {
@@ -837,7 +841,8 @@ void main() {
   float rd = (vUv.y - uRoll.x) * uCss.y / uRollH;
   float roll = exp(-rd * rd) * uRoll.y * uMotion;
   float nd = (uv.y - uMouse.y) / 0.045;
-  float near = exp(-nd * nd) * uMouseE;
+  // only over a full screen picture, like the wake: the reel stays still
+  float near = exp(-nd * nd) * uMouseE * uWakeStrength;
   float edge = smoothstep(0.035, 0.0, uv.y) * 0.35;
   float tearAmt = clamp(band + near + edge + roll, 0.0, 1.0);
   // the mouse row mostly gets streaks (below); it only shifts a little
@@ -961,7 +966,9 @@ void main() {
   float pick = step(0.9895 - 0.30 * tearAmt, h2(vec2(dline * 3.1, dslot + 9.0)));
   float dx = uv.x - h2(vec2(dline, dslot));
   float len = 0.006 + 0.007 * h2(vec2(dslot, dline));
-  col += pick * step(0.0, dx) * step(dx, len) * 0.42 * uMotion;
+  // half as bright on the reel's dark ground, so they do not outshine its grid
+  float onReel = step(0.6, s.a) * step(s.a, 0.9);
+  col += pick * step(0.0, dx) * step(dx, len) * 0.42 * uMotion * (1.0 - 0.5 * onReel);
 
   o = vec4(col, 1.0);
 }`;

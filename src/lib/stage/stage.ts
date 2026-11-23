@@ -883,6 +883,7 @@ export class Stage {
     gl.uniform1f(u.uSceneAAsp, this.aspAbout);
     gl.uniform1f(u.uContactAsp, this.aspContact);
     gl.uniform1f(u.uContactAnchor, a.contactAnchor);
+    gl.uniform1f(u.uTexel, this.texel);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // 4. dots and CRT treatment, to the screen. The wake bends the picture
