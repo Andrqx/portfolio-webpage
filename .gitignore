@@ -42,3 +42,12 @@ next-env.d.ts
 
 # claude code local settings
 .claude/settings.local.json
+
+# reference study material (screenshots of someone else's site, never commit)
+/docs/reference/
+# the brief for the redesign, which names that site
+/REDESIGN_PROMPT.md
+
+# original photos (full size, may carry location metadata). Only the processed
+# copies in public/images/home are deployed; see scripts/prepare-home-assets.mjs
+/assets-src/

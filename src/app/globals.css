@@ -5,8 +5,6 @@
   --foreground: #f2f1ec;
   --muted: #8a8a92;
   --accent: #ff2e63;
-  --accent-2: #a24bff;
-  --accent-3: #ff5fd2;
   --border: rgba(242, 241, 236, 0.12);
 }
 
@@ -15,11 +13,10 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
-  --color-accent-3: var(--accent-3);
   --color-border: var(--border);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-geist-mono);
+  --font-dot: var(--font-doto);
 }
 
 * {
@@ -32,13 +29,10 @@ html {
 }
 
 body {
-  /* No background here on purpose — the fixed TechnoBackground canvas
-     sits at z-index: -10, and a plain (non-positioned) body background
-     paints ABOVE negative-z-index descendants per CSS stacking order,
-     which was fully hiding it. html's background is the fallback. */
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {
@@ -69,66 +63,326 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.gradient-text {
-  background: linear-gradient(
-    100deg,
-    var(--accent),
-    var(--accent-2),
-    var(--accent-3)
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradient-drift 12s ease-in-out infinite;
-}
-
-@keyframes gradient-drift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 24s linear infinite;
-}
-
-@keyframes lightning-flash {
-  0% {
-    filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
-  }
-  12% {
-    filter: brightness(3) drop-shadow(0 0 22px rgba(255, 255, 255, 0.9));
-  }
-  100% {
-    filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
-  }
-}
-
-.animate-lightning-flash {
-  animation: lightning-flash 500ms ease-out;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .gradient-text,
-  .animate-lightning-flash {
-    animation: none;
-  }
   html {
     scroll-behavior: auto;
   }
+  .animate-ping {
+    animation: none;
+  }
+}
+
+/* The home page draws its own grain, so skip the shared overlay there. */
+body:has(.home) .noise-overlay {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ home --
+   The home page is one fixed stage. The page itself is only a tall spacer
+   that gives the scrollbar its length. Layers are faded by HomeStage.tsx. */
+
+.home {
+  position: relative;
+  background: #000;
+}
+
+.home-anchor {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.home-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  /* clip, so find-in-page or a screen reader can never scroll the stage itself */
+  overflow: clip;
+  color: #fff;
+}
+
+.home-stage canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.home-header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem;
+  /* every section is dark now (the reel's ground is dark grey), so the header
+     is plain white, with a dark shadow for the brighter parts of the photos */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6), 0 1px 10px rgba(0, 0, 0, 0.9);
+}
+
+.home-header a {
+  transition: opacity 0.2s;
+}
+
+.home-header a:hover {
+  opacity: 0.6;
+}
+
+.home-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.home-layer[data-on="1"] a {
+  pointer-events: auto;
+}
+
+.home-layer a:hover {
+  opacity: 0.6;
+}
+
+.glow {
+  text-shadow: 0 0 14px rgba(190, 228, 255, 0.5);
+}
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding: 0 1rem 4.5rem;
+  /* the hero is a photo, so the text gets a dark shadow like the about and
+     contact text, for the brighter parts of it */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.75), 0 1px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* A phone held sideways shows a band across the hero with the face in the
+   lower half, so with textSide "right" the name goes to the bottom right there
+   too, clear of the face. */
+@media (max-width: 767px) and (orientation: landscape) {
+  .home-hero[data-side="right"] {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+/* .glow would replace the inherited shadow, so the name and the about heading
+   get both */
+.home-hero .glow,
+.home-text-block .glow {
+  text-shadow: 0 0 14px rgba(190, 228, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.75), 0 1px 10px rgba(0, 0, 0, 0.85);
+}
+
+/* white on the reel's dark ground, with a shadow where a card passes behind */
+.home-work {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.home-work-list {
+  position: absolute;
+  left: 1rem;
+  top: 5rem;
+  /* above the centred card's link (.home-open), which reaches the list on
+     tablets; only the list's own links take clicks, the rest passes through */
+  z-index: 1;
+}
+
+.home-work li {
+  white-space: pre;
+  opacity: 0.55;
+}
+
+.home-work li[data-active="1"] {
+  opacity: 1;
+}
+
+/* invisible link sitting on the centre card of the reel */
+.home-open {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* the centred card as drawn: 107.9vh wide (with the lens), up to 0.84 of the
+     scene's width on narrow screens */
+  width: min(107.9vh, 88vw);
+  aspect-ratio: 1.57;
+  transform: translate(-50%, -50%);
+  display: none;
+  cursor: pointer;
+}
+
+.home-open[data-on="1"] {
+  display: block;
+}
+
+.home-layer[data-on="1"] .home-open:hover {
+  opacity: 1;
+}
+
+.home-text-block {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: 100%;
+  max-width: 31rem;
+  padding-left: 1.25rem;
+  border-left: 1px dotted rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
+}
+
+.home-pulse {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #7dffb0;
+  box-shadow: 0 0 10px #7dffb0;
+  animation: home-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes home-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.home-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  text-align: center;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.9);
+}
+
+.home-foot {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 0;
+  right: 0;
+}
+
+@media (min-width: 768px) {
+  .home-header {
+    padding: 1.25rem 2.5rem;
+  }
+
+  .home-hero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+  }
+
+  /* hero.textSide "right": the name on the right, for a photo with you on the left */
+  .home-hero[data-side="right"] {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .home-work-list {
+    left: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .home-text-block {
+    left: 3.75rem;
+  }
+}
+
+/* No WebGL2: drop the stage and lay the same content out as a plain page. */
+.home--static .home-stage {
+  position: static;
+  overflow: visible;
+}
+
+.home--static canvas,
+.home--static .home-open,
+.home--static .home-anchor {
+  display: none;
+}
+
+.home--static .home-header {
+  position: sticky;
+  top: 0;
+  mix-blend-mode: normal;
+  background: #000;
+}
+
+.home--static .home-layer {
+  position: relative;
+  opacity: 1 !important;
+  transform: none !important;
+  min-height: 70vh;
+  pointer-events: auto;
+  mix-blend-mode: normal;
+}
+
+.home--static .home-layer a {
+  pointer-events: auto;
+}
+
+.home--static .home-work-list,
+.home--static .home-text-block {
+  position: static;
+  transform: none;
+  margin: 5rem 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-pulse {
+    animation: none;
+  }
+}
+
+/* The picture fades in once its photos and fonts have loaded. Only when
+   scripting is on, so the page is never hidden from a reader without it. */
+.home-loading {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  animation: home-pulse 1s steps(2, jump-none) infinite;
+}
+
+@media (scripting: enabled) {
+  .home-stage canvas {
+    transition: opacity 0.9s ease-out;
+  }
+
+  .home[data-ready="0"] .home-stage canvas {
+    opacity: 0;
+  }
+
+  .home[data-ready="0"] .home-loading {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stage canvas {
+    transition: none;
+  }
+
+  .home-loading {
+    animation: none;
+  }
+}
+
+/* the plain fallback page: keep #section targets clear of the sticky header */
+.home--static .home-layer,
+.home--static .home-work li {
+  scroll-margin-top: 5rem;
 }
