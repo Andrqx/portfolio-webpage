@@ -20,7 +20,7 @@ Everything you'd normally change lives in [`src/data/content.ts`](src/data/conte
 | Name, school, email, LinkedIn | `profile` |
 | Hero photo (or a cutout or clip) and one-line intro | `hero` |
 | About me paragraphs | `about` |
-| Line on the right of the hero (empty for now) | `hero.line` |
+| Line on the hero, opposite your name (empty for now) | `hero.line` |
 | Cards on the work reel | `orgs` (order = card order) |
 | Roles shown on each card and org page | `experience` (matched to `orgs` by `name`) |
 | Project pages under each org | `projects` (matched to `orgs` by `team`) |

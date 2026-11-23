@@ -14,12 +14,15 @@ export const smooth = (a: number, b: number, x: number) => {
 // The hero and about cards rest about 8% larger than the project cards.
 export const Z_REST = 0.09;
 // From the about photo filling the screen to the contact text being in takes
-// about 2.2 screens of scroll, of which the fizzle takes about 0.6.
+// about 2.2 screens of scroll with no about paragraphs (3 with one), of which
+// the fizzle takes about 0.6.
 const ABOUT_HOLD = 0.5; // screens the about photo holds before it starts to change
 // More for each about paragraph, so there is time to read it. The text rises
-// at half the scroll speed when it fits (about 0.4 of a screen of text per
-// paragraph); HomeStage makes a longer block rise faster, so it has always
-// left the top before the contact text comes in.
+// at half the scroll speed when it fits: about 0.27 of a screen for the
+// heading and the first paragraph (about 200 characters on a 945 px tall
+// laptop), about 0.4 more for each further one. HomeStage makes a longer
+// block rise faster, so it has always left the top before the contact text
+// comes in.
 const ABOUT_PER_PARAGRAPH = 0.8;
 const CHANGE_LEAD = 0.5; // screens from the start of the change to contactStart
 const CONTACT_GROW = 1.5; // screens from contactStart until the contact photo has filled in (contactFull)
@@ -38,7 +41,7 @@ export type Timeline = {
   zoomA: number;
   /** 1 = about card fills the screen */
   zoomB: number;
-  /** 0..1, how much of the screen one full-bleed picture fills (drives the edge vignette) */
+  /** 0..1, how much of the screen one full-bleed picture fills (drives the tear bands and the wake's strength; the edge vignette uses zoomB) */
   bleed: number;
   /** 0..1 through the about section, for its slow zoom */
   about: number;

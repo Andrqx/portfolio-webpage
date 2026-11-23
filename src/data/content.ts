@@ -17,8 +17,10 @@ export const profile = {
 //   node scripts/prepare-home-assets.mjs hero
 // and it rewrites public/images/home/hero.jpg. Then set `face` to where your
 // head is in the new picture, and `focus` to the part that should stay in view.
-// The Rock of Cashel photo used before is assets-src/hero-scene-cashel.jpg,
-// with face { x: 0.508, y: 0.475, rx: 0.055, ry: 0.0975 } and focus [0.508, 0.12].
+// The Rock of Cashel photo used before is assets-src/hero-scene-cashel.jpg. To
+// get that hero back as it was, set HERO_SIDE_FILL in the script to 0 before
+// running it, leave `span` out, and use face { x: 0.508, y: 0.475, rx: 0.055,
+// ry: 0.0975 } and focus [0.508, 0.12].
 //
 // `figure` can also be a cutout of you on a transparent background (a .png or
 // .webp, see the README), or a short looping clip ("/media/hero.mp4") shot
@@ -36,7 +38,7 @@ export const hero: {
   textSide?: "left" | "right";
   keyLow: number;
   keyHigh: number;
-  /** Short line on the right of the hero. Leave it empty to show nothing there. */
+  /** Short line on the hero, on the side opposite your name on laptops (the left when textSide is "right"). Leave it empty to show nothing there. */
   line: string;
 } = {
   figure: "/images/home/hero.jpg",
@@ -63,9 +65,10 @@ export const hero: {
 // About section paragraphs, shown under "About me" over the team photo. The
 // first one is set a little larger. Leave the list empty to show only the
 // heading. Each paragraph makes the about section 0.8 of a screen longer, so
-// there is time to read it before the contact section comes in. That fits about
-// 0.4 of a screen of text per paragraph (roughly 350 characters on a laptop);
-// longer text still works, it just scrolls past faster.
+// there is time to read it before the contact section comes in. At half the
+// scroll speed that fits about 200 characters for the first paragraph and
+// about 350 for each further one on a laptop; longer text still works, it just
+// scrolls past a little faster.
 // Written from the bio on the old site and the experience list below.
 export const about: string[] = [
   "I'm Andrew, a 3rd year mechanical engineering student at McMaster, currently on a work term at Multimatic. I spent three years on the Mac Formula Electric chassis, the last one as chassis lead, and I'm now on the powertrain electromechanical subteam.",

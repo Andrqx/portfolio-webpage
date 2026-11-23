@@ -20,7 +20,7 @@ export type HomeProps = {
   /** footer year, worked out on the server so the built page and the browser agree */
   year: number;
   eyebrow: string;
-  /** empty to show nothing on the right of the hero */
+  /** a line on the hero, on the side opposite the name on laptops; empty to show nothing */
   tagline: string;
   /** which side the name sits on over the hero on laptops and wider */
   heroSide: "left" | "right";
@@ -258,7 +258,12 @@ export default function HomeStage(props: HomeProps) {
           {cards.map((c, i) => (
             <span key={c.slug} id={`work-${c.slug}`} className="home-anchor" style={{ top: `${(i + 1) * 100}vh` }} />
           ))}
-          <span id="about" className="home-anchor" style={{ top: `${(m.aboutStart + 0.6) * 100}vh` }} />
+          {/* a little later when there is a paragraph, so the whole blurb is on screen */}
+          <span
+            id="about"
+            className="home-anchor"
+            style={{ top: `${(m.aboutStart + 0.6 + 0.4 * Math.min(aboutParagraphs, 1)) * 100}vh` }}
+          />
           <span id="contact" className="home-anchor" style={{ top: `${m.total * 100}vh` }} />
         </>
       )}
@@ -321,7 +326,7 @@ export default function HomeStage(props: HomeProps) {
 
           <section ref={aboutRef} id={noGl ? "about" : undefined} className="home-layer home-text" data-on="0" aria-labelledby="about-h">
             <div className="home-text-block">
-              {/* as large as the other section titles, so the section reads as "about me" the moment it comes up */}
+              {/* as large as the contact headline, so the section reads as "about me" the moment it comes up */}
               <h2 id="about-h" className="font-dot glow text-4xl font-black uppercase leading-none md:text-[2.7rem]" data-scramble>
                 {props.about.label}
               </h2>
