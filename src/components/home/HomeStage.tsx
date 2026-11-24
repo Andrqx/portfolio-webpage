@@ -138,13 +138,14 @@ export default function HomeStage(props: HomeProps) {
         openRef.current.dataset.on = centred ? "1" : "0";
       }
       // The about text starts below the bottom edge and scrolls up through the
-      // pinned picture at half the scroll speed, as on the reference. A block
-      // too tall to clear the top that way by the time it fades out (just before
-      // the contact text comes in) rises faster, so it never meets the contact
-      // text. The canvas dims the picture behind it with the same tl.aboutText.
+      // pinned picture at the speed that takes it off the top just as it fades
+      // out, just before the contact text comes in, so it never meets the
+      // contact text. That is about the scroll speed with one paragraph (see
+      // timeline.ts), and never under half of it, the reference's speed. The
+      // canvas dims the picture behind it with the same tl.aboutText.
       const speed = Math.max(0.5, (vh + aboutBlockH) / (Math.max(0.1, m.aboutTextOut - m.text1In) * vh));
       const rise = (e: number) => (e - s) * vh * speed;
-      // switched off once the contact picture is full; it has faded out by then
+      // switched off at the end of the change (contactFull); it has faded out well before
       const visible = (e: number) => (s > e - 0.02 && s < m.contactFull ? 1 : 0);
       layer(aboutRef.current, visible(m.text1In) * tl.aboutText, rise(m.text1In));
       // the contact text comes in once the contact picture has fizzled in
@@ -258,12 +259,8 @@ export default function HomeStage(props: HomeProps) {
           {cards.map((c, i) => (
             <span key={c.slug} id={`work-${c.slug}`} className="home-anchor" style={{ top: `${(i + 1) * 100}vh` }} />
           ))}
-          {/* a little later when there is a paragraph, so the whole blurb is on screen */}
-          <span
-            id="about"
-            className="home-anchor"
-            style={{ top: `${(m.aboutStart + 0.6 + 0.4 * Math.min(aboutParagraphs, 1)) * 100}vh` }}
-          />
+          {/* where the whole about text is in view, a little below the middle (marks().aboutRead) */}
+          <span id="about" className="home-anchor" style={{ top: `${m.aboutRead * 100}vh` }} />
           <span id="contact" className="home-anchor" style={{ top: `${m.total * 100}vh` }} />
         </>
       )}
