@@ -149,7 +149,7 @@ export const projects: Project[] = [
     slug: "inspection-fixture-root-cause-redesign",
     title: "Inspection Fixture Fracture Root Cause & Redesign",
     team: "Multimatic",
-    period: "May 2026 - Present",
+    period: "May 2026 - Nov 2026",
     description:
       "Root caused a repeat fracture in a Delrin inspection fixture and redesigned it, cutting bending stress from 115 MPa to 1.4 MPa and raising stiffness roughly 40x.",
     detail: [
@@ -162,7 +162,7 @@ export const projects: Project[] = [
     slug: "dyno-failure-root-cause-analysis",
     title: "Damper First Pass Yield Investigation",
     team: "Multimatic",
-    period: "May 2026 - Present",
+    period: "May 2026 - Nov 2026",
     description:
       "Investigating damper first pass yield with a cross functional team, tracing failures on six torn down units to out of spec tolerances and evaluating bore honing as the fix.",
     detail: [
@@ -175,7 +175,7 @@ export const projects: Project[] = [
     slug: "damper-line-part-buffer-cart",
     title: "Damper Line Part Buffer Cart",
     team: "Multimatic",
-    period: "May 2026 - Present",
+    period: "May 2026 - Nov 2026",
     description:
       "Designed and built an overflow parts cart in house for $4k against a $12k external quote, using a single piece CNC tray for up to 9x the bending stiffness of the original bolted design.",
     detail: [
@@ -256,7 +256,7 @@ export const experience: ExperienceItem[] = [
   {
     role: "Ride Dynamics Manufacturing Intern",
     org: "Multimatic",
-    period: "May 2026 - Present",
+    period: "May 2026 - Nov 2026",
     description:
       "Root caused and redesigned a fracturing Delrin inspection fixture, joined a cross functional team investigating damper first pass yield, and built an overflow parts cart in house for $4k against a $12k outside quote.",
   },
@@ -343,7 +343,7 @@ export const orgs: Org[] = [
   {
     slug: "multimatic",
     title: "Manufacturing Engineering | Ride Dynamics",
-    period: "May 2026 - Present",
+    period: "May 2026 - Nov 2026",
     name: "Multimatic",
     label: "Internship",
     team: "Multimatic",
