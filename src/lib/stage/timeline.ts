@@ -14,24 +14,33 @@ export const smooth = (a: number, b: number, x: number) => {
 // The hero and about cards rest about 8% larger than the project cards.
 export const Z_REST = 0.09;
 // From the about photo filling the screen to the contact text being in takes
-// about 2.2 screens of scroll with no about paragraphs (3 with one), of which
-// the fizzle takes about 0.6.
-const ABOUT_HOLD = 0.5; // screens the about photo holds before it starts to change
-// More for each about paragraph, so there is time to read it. The text rises
-// at half the scroll speed when it fits: about 0.27 of a screen for the
-// heading and the first paragraph (about 200 characters on a 945 px tall
-// laptop), about 0.4 more for each further one. HomeStage makes a longer
-// block rise faster, so it has always left the top before the contact text
-// comes in.
-const ABOUT_PER_PARAGRAPH = 0.8;
-const CHANGE_LEAD = 0.5; // screens from the start of the change to contactStart
-const CONTACT_GROW = 1.5; // screens from contactStart until the contact photo has filled in (contactFull)
-const CONTACT_HOLD = 1.5; // then holds
+// about 1.4 screens of scroll with no about paragraphs (1.75 with one). The
+// fizzle runs over about 0.7 of that (uChange 0.1 to FIZZLE_DONE), though only
+// a few spots show in its first third. It was about 3 with one paragraph until
+// the owner asked for less scrolling here again.
+const ABOUT_HOLD = 0.25; // screens the about photo holds before it starts to change
+// More for each about paragraph, so there is time to read it. HomeStage has
+// the text rise at the speed that takes it off the top just as it starts to
+// fade out (never under half the scroll speed). With these lengths that is
+// about the scroll speed for the heading and one paragraph of about 270
+// characters on a 945 px tall laptop, and a little faster on a phone, where
+// the same text is taller. Each further paragraph adds 0.4 of a screen
+// whatever its length, about the height of a 500 character paragraph on that
+// laptop, so a shorter one slows the text a little (one as long as the first:
+// about 0.9 of the scroll speed there).
+const ABOUT_PER_PARAGRAPH = 0.4;
+// The change (uChange 0 to 1) runs from changeStart to contactFull, over
+// CHANGE_LEAD + CONTACT_GROW screens; only the sum has an effect. The contact
+// photo has fizzled in before the end, at FIZZLE_DONE of the change
+// (contactTextIn).
+const CHANGE_LEAD = 0.3; // screens from the start of the change to contactStart
+const CONTACT_GROW = 0.9; // screens from contactStart to contactFull, the end of the change
+const CONTACT_HOLD = 0.5; // then holds, to the end of the page
 // The contact photo has fizzled in by this point of the change (SCENE about()
 // forces the last few tiles through just before it), and the contact text
 // starts to fade in there. The about text fades out over the screens before.
 export const FIZZLE_DONE = 0.68;
-const CONTACT_TEXT_FADE = 0.35; // screens the contact text takes to fade in
+const CONTACT_TEXT_FADE = 0.3; // screens the contact text takes to fade in
 const ABOUT_TEXT_FADE = 0.2; // screens the about text takes to fade out, just before
 
 export type Timeline = {
@@ -55,21 +64,29 @@ export type Timeline = {
 export function marks(cards: number, aboutParagraphs = 0) {
   const last = cards + 1;
   const aboutStart = last;
+  // the about text rises through the pinned picture from below the bottom edge
+  const text1In = aboutStart - 0.07;
   const changeStart = aboutStart + ABOUT_HOLD + ABOUT_PER_PARAGRAPH * Math.max(aboutParagraphs, 0);
   const contactStart = changeStart + CHANGE_LEAD;
   const contactFull = contactStart + CONTACT_GROW;
   // the contact text comes in once the contact photo has fizzled in
   const contactTextIn = changeStart + FIZZLE_DONE * (contactFull - changeStart);
+  // the about text fades out from here, just before the contact text comes in
+  const aboutTextOut = contactTextIn - ABOUT_TEXT_FADE;
   const total = contactFull + CONTACT_HOLD;
   return {
     last,
     aboutStart,
-    // the about text rises through the pinned picture from below the bottom edge
-    text1In: aboutStart - 0.07,
+    text1In,
+    // Where the #about link lands: a little before half way through the about
+    // text's rise, so the text sits a little below the middle of the screen.
+    // Half way would centre it (HomeStage picks the speed so it would), but a
+    // phone held sideways gets the laptop-sized text in under 400 px of height,
+    // and there a centred block puts the heading under the header.
+    aboutRead: text1In + 0.42 * (aboutTextOut - text1In),
     changeStart,
     contactStart,
-    // the about text fades out from here, just before the contact text comes in
-    aboutTextOut: contactTextIn - ABOUT_TEXT_FADE,
+    aboutTextOut,
     contactTextIn,
     contactTextFull: contactTextIn + CONTACT_TEXT_FADE,
     contactFull,

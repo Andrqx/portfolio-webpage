@@ -64,14 +64,13 @@ export const hero: {
 
 // About section paragraphs, shown under "About me" over the team photo. The
 // first one is set a little larger. Leave the list empty to show only the
-// heading. Each paragraph makes the about section 0.8 of a screen longer, so
-// there is time to read it before the contact section comes in. At half the
-// scroll speed that fits about 200 characters for the first paragraph and
-// about 350 for each further one on a laptop; longer text still works, it just
-// scrolls past a little faster.
+// heading. Each paragraph makes the about section 0.4 of a screen longer, so
+// there is time to read it before the contact section comes in. With one
+// paragraph of about 270 characters the text moves at about the scroll speed
+// on a laptop; longer text still works, it just scrolls past a little faster.
 // Written from the bio on the old site and the experience list below.
 export const about: string[] = [
-  "I'm Andrew, a 3rd year mechanical engineering student at McMaster, currently on a work term at Multimatic. I spent three years on the Mac Formula Electric chassis, the last one as chassis lead, and I'm now on the powertrain electromechanical subteam.",
+  "I'm Andrew, a 3rd year mechanical engineering student at McMaster. I did a work term at Multimatic from May to November 2026. I spent three years on the Mac Formula Electric chassis, the last one as chassis lead, and I'm now on the powertrain electromechanical subteam.",
 ];
 
 export const skills = [
@@ -164,10 +163,10 @@ export const projects: Project[] = [
     team: "Multimatic",
     period: "May 2026 - Nov 2026",
     description:
-      "Investigating damper first pass yield with a cross functional team, tracing failures on six torn down units to out of spec tolerances and evaluating bore honing as the fix.",
+      "Investigated damper first pass yield with a cross functional team, tracing failures on six torn down units to out of spec tolerances and evaluating bore honing as the fix.",
     detail: [
       "Dampers were failing first pass yield, so I joined a cross functional team investigating why. I ran dyno characterization for a customer design office trial, looking at rod rotation and bleed past the piston, and tore down six failed units to trace the failures to out of spec tolerances.",
-      "I flagged that the dyno's velocity roll off near end of stroke understates bleed effects, since orifice force scales with v^2. Bore honing is the leading fix so far, and I'm evaluating it on cost per unit against the pass rate gain, alongside a tolerance sweep on the moving components.",
+      "I flagged that the dyno's velocity roll off near end of stroke understates bleed effects, since orifice force scales with v^2. Bore honing was the leading fix, and I was evaluating it on cost per unit against the pass rate gain, alongside a tolerance sweep on the moving components.",
     ],
     tags: ["Root Cause Analysis", "GD&T", "Manufacturing"],
   },
